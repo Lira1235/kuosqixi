@@ -91,7 +91,7 @@
         /* ========================================== 【步驟一】滾動粘性疊加區 CSS ========================================== */
         .step1-scroll-container {
             position: relative;
-            height: 500vh; 
+            height: 400vh; /* 縮短滾動軌道總長度，提升物理滑動的節奏感 */
             width: 100%;
         }
 
@@ -116,19 +116,20 @@
             width: 100%;
             height: 100%;
             display: flex;
-            align-items: flex-start;
+            align-items: flex-start; /* 前面幾張圖對齊頂部 */
             opacity: 0; 
             transform: translate3d(0, 80px, 0); /* 初始皆位於下方，滑動時隨物理距離上移 */
             pointer-events: none;
             transition: none; 
-            will-change: transform, opacity; /* 預先通知瀏覽器避免重繪與重排 */
+            will-change: transform, opacity;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
         }
 
-        /* 針對過渡圖 7 的載入與繪圖優化 */
+        /* 【重要優化】過渡圖 7 對齊畫面正中央，並做繪圖限制優化 */
         .step-7 {
-            contain: paint; /* 限制重繪區域在容器內，降低載入卡頓 */
+            align-items: center !important; /* 確保工作區域 7 物理位移定位後處於螢幕正中央 */
+            contain: paint;
             display: flex !important;
         }
 
@@ -194,7 +195,7 @@
                 </div>
             </div>
 
-            <!-- 【階段四：過渡圖 7，同樣由下往上物理上滑漸顯（載入優化版）】 -->
+            <!-- 【階段四：過渡圖 7，由下往上物理上滑至畫面中央，透明度達到 100%】 -->
             <!-- 7. 工作區域 7 -->
             <div class="step1-item step-7" style="z-index: 12;">
                 <div class="img-wrapper">
@@ -265,82 +266,73 @@
             progress = Math.max(0, Math.min(1, progress));
 
             // =======================================================
-            // 1. 階段一：工作區域 3 & 工作區域 2 (10% -> 35%)
+            // 縮短後的步驟一時間軸 (0.05 -> 0.50)
             // =======================================================
-            const img3Opacity = getInterpolatedValue(progress, 0.10, 0.25, 0, 1);
-            const img3Y = getInterpolatedValue(progress, 0.10, 0.25, 80, 0);
+            
+            // 1. 階段一：工作區域 3 & 工作區域 2 (0.05 -> 0.25)
+            const img3Opacity = getInterpolatedValue(progress, 0.05, 0.20, 0, 1);
+            const img3Y = getInterpolatedValue(progress, 0.05, 0.20, 80, 0);
             if (img3) {
                 img3.style.opacity = img3Opacity;
                 img3.style.transform = `translate3d(0, ${img3Y}px, 0)`;
             }
 
-            const img2Opacity = getInterpolatedValue(progress, 0.15, 0.35, 0, 1);
-            const img2Y = getInterpolatedValue(progress, 0.15, 0.35, 80, 0);
+            const img2Opacity = getInterpolatedValue(progress, 0.10, 0.25, 0, 1);
+            const img2Y = getInterpolatedValue(progress, 0.10, 0.25, 80, 0);
             if (img2) {
                 img2.style.opacity = img2Opacity;
                 img2.style.transform = `translate3d(0, ${img2Y}px, 0)`;
             }
 
-            // =======================================================
-            // 2. 階段二：工作區域 5 & 工作區域 6 (30% -> 55%)
-            // =======================================================
-            const img5Opacity = getInterpolatedValue(progress, 0.30, 0.45, 0, 1);
-            const img5Y = getInterpolatedValue(progress, 0.30, 0.45, 80, 0);
+            // 2. 階段二：工作區域 5 & 工作區域 6 (0.20 -> 0.40)
+            const img5Opacity = getInterpolatedValue(progress, 0.20, 0.35, 0, 1);
+            const img5Y = getInterpolatedValue(progress, 0.20, 0.35, 80, 0);
             if (img5) {
                 img5.style.opacity = img5Opacity;
                 img5.style.transform = `translate3d(0, ${img5Y}px, 0)`;
             }
 
-            const img6Opacity = getInterpolatedValue(progress, 0.35, 0.55, 0, 1);
-            const img6Y = getInterpolatedValue(progress, 0.35, 0.55, 80, 0);
+            const img6Opacity = getInterpolatedValue(progress, 0.25, 0.40, 0, 1);
+            const img6Y = getInterpolatedValue(progress, 0.25, 0.40, 80, 0);
             if (img6) {
                 img6.style.opacity = img6Opacity;
                 img6.style.transform = `translate3d(0, ${img6Y}px, 0)`;
             }
 
-            // =======================================================
-            // 3. 階段三：工作區域 1 & 工作區域 4 (50% -> 70%)
-            // - 步驟一的所有圖層在滾動比例 0.70 時會完全顯現並定位完成。
-            // =======================================================
-            const img1Opacity = getInterpolatedValue(progress, 0.50, 0.65, 0, 1);
-            const img1Y = getInterpolatedValue(progress, 0.50, 0.65, 30, 0);
+            // 3. 階段三：工作區域 1 & 工作區域 4 (0.35 -> 0.50)
+            // 步驟一的圖片在此階段會完全顯示並定位完成
+            const img1Opacity = getInterpolatedValue(progress, 0.35, 0.45, 0, 1);
+            const img1Y = getInterpolatedValue(progress, 0.35, 0.45, 30, 0);
             if (img1) {
                 img1.style.opacity = img1Opacity;
                 img1.style.transform = `translate3d(0, ${img1Y}px, 0)`;
             }
 
-            const img4Opacity = getInterpolatedValue(progress, 0.55, 0.70, 0, 1);
-            const img4Y = getInterpolatedValue(progress, 0.55, 0.70, 30, 0);
+            const img4Opacity = getInterpolatedValue(progress, 0.40, 0.50, 0, 1);
+            const img4Y = getInterpolatedValue(progress, 0.40, 0.50, 30, 0);
             if (img4) {
                 img4.style.opacity = img4Opacity;
                 img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
             }
 
             // =======================================================
-            // 【物理留白區間】 (0.70 -> 0.80)
-            // - 在這個滾動區段中，步驟一的完整圖層完全定格在畫面上，供使用者閱讀，
-            // - 此時過渡圖 7 尚未出現（保持透明度 0），拉開兩者之間的物理滑動間隔。
+            // 4. 階段四：過渡圖 7 由下往上物理上滑至【畫面中央】 (0.50 -> 0.75)
+            // - 在滾動比例 0.75 時，過渡圖完全到達中心位置且透明度（Opacity）達到 100% (1.0)
             // =======================================================
-
-            // =======================================================
-            // 4. 階段四：過渡圖 7 延後到 80% 才開始上滑漸顯 (0.80 -> 0.95)
-            // - 隨物理滑動從下方 80px 緩緩上移至 0px 並淡入，覆蓋底圖。
-            // =======================================================
-            const img7Opacity = getInterpolatedValue(progress, 0.80, 0.95, 0, 1);
-            const img7Y = getInterpolatedValue(progress, 0.80, 0.95, 80, 0);
+            const img7Opacity = getInterpolatedValue(progress, 0.50, 0.75, 0, 1);
+            const img7Y = getInterpolatedValue(progress, 0.50, 0.75, 80, 0);
             if (img7) {
                 img7.style.opacity = img7Opacity;
                 img7.style.transform = `translate3d(0, ${img7Y}px, 0)`;
             }
 
             // =======================================================
-            // 5. 黏性框架（整個步驟一區域）物理上滑，自然銜接下方步驟二 (0.95 -> 1.00)
-            // - 過渡圖 7 在幾乎完全顯現後，順暢地將整個結構推離螢幕，帶出步驟二。
+            // 5. 畫面短暫停留 & 整個步驟一粘性框架上移滑出 (0.85 -> 1.00)
+            // - 確保過渡圖在畫面中央呈現 100% 透明度後，再慢慢隨滑動推離螢幕，無縫拉出步驟二
             // =======================================================
-            const frameTranslateY = getInterpolatedValue(progress, 0.95, 1.00, 0, -100);
+            const frameTranslateY = getInterpolatedValue(progress, 0.85, 1.00, 0, -100);
             stickyFrame.style.transform = `translate3d(0, ${frameTranslateY}vh, 0)`;
 
-            // 釋放鎖定
             isTicking = false;
         }
 
