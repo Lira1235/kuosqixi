@@ -20,7 +20,7 @@
             overflow-x: hidden;
         }
 
-        /* 標題樣式：網頁剛載入時，強制在整個畫面的「正中央」 */
+        /* 標題區塊：剛進網頁時滿版（100vh），只有文字，完全無圖片 */
         .title-container {
             display: flex;
             justify-content: center;
@@ -30,6 +30,9 @@
             height: 100dvh;
             box-sizing: border-box;
             padding: 0 20px;
+            position: relative;
+            z-index: 20; /* 確保在最上層覆蓋圖片 */
+            background-color: transparent; /* 保持背景圖看得到 */
         }
 
         h1 {
@@ -78,11 +81,12 @@
            【步驟一】滾動粘性疊加區 CSS
         ========================================== */
         
-        /* 步驟一專屬滾動容器：高度設為 300vh（兩次主要滑動階段 + 預留滑出空間） */
+        /* 步驟一專屬滾動容器：高度設為 350vh */
         .step1-scroll-container {
             position: relative;
-            height: 300vh; 
+            height: 350vh; 
             width: 100%;
+            margin-top: -100vh; /* 與標題重合定位，達到無縫滾動效果 */
         }
 
         /* 粘性定位框架：完全貼合手機螢幕 */
@@ -104,15 +108,15 @@
             display: flex;
             align-items: flex-start;
             
-            /* 預設隱藏，並由下往上小幅度位移 */
+            /* 預設完全隱藏，並向下位移 50px */
             opacity: 0;
-            transform: translateY(30px); /* 向下位移 30px */
+            transform: translateY(50px); 
             pointer-events: none;
-            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: opacity, transform;
         }
 
-        /* 啟動時顯示，並回到原本位置 */
+        /* 啟動時顯示，並流暢往上滑動回到原位 */
         .step1-item.active {
             opacity: 1;
             transform: translateY(0);
@@ -126,7 +130,7 @@
 </head>
 <body>
 
-    <!-- ─── 標題區：網頁載入時居中 ─── -->
+    <!-- ─── 標題區：網頁剛載入時只顯示這個 ─── -->
     <div class="title-container">
         <h1>七夕收涎儀式流程</h1>
     </div>
@@ -146,18 +150,18 @@
             </div>
 
             <!-- 2. 工作區域 2 
-                 出現順序：第一階段（與 3 相差 0.01s）
+                 出現順序：第一階段（與 3 相差 0.02s，延遲設定為 0.02s）
                  疊加順序：最底層 (z-index: 5) -->
-            <div class="step1-item step-group-1" style="transition-delay: 0.01s; z-index: 5;">
+            <div class="step1-item step-group-1" style="transition-delay: 0.02s; z-index: 5;">
                 <div class="img-wrapper">
                     <img src="工作區域 2.png">
                 </div>
             </div>
 
 
-            <!-- 【階段二：第二次滑動顯現】 -->
+            <!-- 【階段二：下一次滑動顯現】 -->
             <!-- 3. 工作區域 5 
-                 出現順序：第二階段（延遲 0s）
+                 出現順序：第二階段（最先，延遲 0s）
                  疊加順序：第二層 (z-index: 9) -->
             <div class="step1-item step-group-2" style="z-index: 9;">
                 <div class="img-wrapper">
@@ -166,16 +170,16 @@
             </div>
 
             <!-- 4. 工作區域 6 
-                 出現順序：第二階段（與 5 相差 0.02s）
+                 出現順序：第二階段（與 5 相差 0.03s，延遲設定為 0.03s）
                  疊加順序：第三層 (z-index: 8) -->
-            <div class="step1-item step-group-2" style="transition-delay: 0.02s; z-index: 8;">
+            <div class="step1-item step-group-2" style="transition-delay: 0.03s; z-index: 8;">
                 <div class="img-wrapper">
                     <img src="工作區域 6.png">
                 </div>
             </div>
 
             <!-- 5. 工作區域 1 
-                 出現順序：第二階段（於 5 出現後隔 0.02s，即延遲 0.02s）
+                 出現順序：第二階段（與 5 相差 0.02s，延遲設定為 0.02s）
                  疊加順序：第四層 (z-index: 7) -->
             <div class="step1-item step-group-2" style="transition-delay: 0.02s; z-index: 7;">
                 <div class="img-wrapper">
@@ -184,7 +188,7 @@
             </div>
 
             <!-- 6. 工作區域 4 
-                 出現順序：第二階段（於 5 出現後隔 0.02s，即延遲 0.02s）
+                 出現順序：第二階段（與 5 相差 0.02s，延遲設定為 0.02s）
                  疊加順序：第五層 (z-index: 6) -->
             <div class="step1-item step-group-2" style="transition-delay: 0.02s; z-index: 6;">
                 <div class="img-wrapper">
@@ -196,7 +200,7 @@
     </div>
 
 
-    <!-- ─── 步驟二及後續內容 ─── -->
+    <!-- ─── 步驟二及後續內容（步驟一跑完，畫面才推上來） ─── -->
     
     <!-- 步驟 2 -->
     <div class="content-section">
@@ -243,24 +247,25 @@
             // 可滾動總高度
             const scrollableHeight = rect.height - window.innerHeight;
             
-            // 計算步驟一整體滾動進度 (0 ~ 1)
+            // 計算進度 (0 ~ 1)
             let progress = -rect.top / scrollableHeight;
             progress = Math.max(0, Math.min(1, progress)); 
 
-            // 將滾動進度分為兩大主要滑動區間：
-            // 1. 進度在 0% ~ 45%：顯示「第一組」（工作區域 3、2）
-            // 2. 進度在 45% ~ 90%：顯示「第二組」（工作區域 5、6、1、4）
-            // 3. 進度在 90% ~ 100%：鎖定完全顯現，繼續往下滑動時便會推入步驟二
+            // =======================================================
+            // 💡 滾動區間控制：
+            // - 進度達 25%：觸發「第一組」（工作區域 3 先出，工作區域 2 延遲 0.02s）
+            // - 進度達 65%：觸發「第二組」（工作區域 5 先出，6 延遲 0.03s，1 與 4 延遲 0.02s）
+            // =======================================================
             
-            // 第一組判定
-            if (progress >= 0.1) {
+            // 第一組判定 (工作區域 2, 3)
+            if (progress >= 0.25) {
                 group1.forEach(step => step.classList.add('active'));
             } else {
                 group1.forEach(step => step.classList.remove('active'));
             }
 
-            // 第二組判定
-            if (progress >= 0.5) {
+            // 第二組判定 (工作區域 5, 6, 1, 4)
+            if (progress >= 0.65) {
                 group2.forEach(step => step.classList.add('active'));
             } else {
                 group2.forEach(step => step.classList.remove('active'));
