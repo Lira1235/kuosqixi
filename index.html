@@ -6,136 +6,231 @@
     <title>七夕收涎儀式流程</title>
     <style>
         body {
-            /* 1. 設定背景圖片路徑 */
-            background-image: url('web工作區域 1.png'); 
+            background-image: url('web工作區域 1.png');
             background-size: 100% auto;
-            /* 3. 讓背景固定不隨捲軸移動 */
             background-attachment: scroll;
-            /* 4. 置中對齊 */
             background-position: center top;
             background-repeat: no-repeat;
             min-height: 100vh;
             background-color: #a24731;
             margin: 0;
             padding: 20px;
-        } /* 修正閉合括號 */
-
-        /* 設定標題顏色與大小 */
-        h1 {
-            text-align: center; /* 讓內容居中 */
-            color: #e99e9d;
-            font-size: 60px; /* 標題字體大小 */
-            margin-bottom: 50px;
+            font-family: sans-serif;
         }
 
-        /* 設定段落文字大小 */
+        /* 標題樣式 */
+        h1 {
+            text-align: center;
+            color: #e99e9d;
+            font-size: 60px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        /* 段落文字樣式 */
         p {
-            text-align: left; /* 讓內容靠左 */
+            text-align: left;
             font-size: 25px;
             line-height: 1.6;
-            color: #ffffff; /* 文字顏色 */
+            color: #ffffff;
             margin-bottom: 10px;
         }
 
-        /* 設定圖片樣式 */
+        /* 圖片基本設定與陰影（疊加時更有層次感） */
         img {
-            border-radius: 15px; /* 讓圖片圓角 */
+            border-radius: 15px;
             margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); 
         }
 
-        /* ==================== 
-           漸漸上浮的 CSS 動畫設定 
-           ==================== */
-        .fade-in-section {
-            opacity: 0; /* 預設隱藏 */
-            transform: translateY(50px); /* 預設向下位移 50px */
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out; /* 動態過渡時間 */
-            margin-bottom: 60px; /* 讓每個步驟之間有舒適的距離 */
+        /* ==========================================
+           滾動疊加核心 CSS 
+        ========================================== */
+        
+        /* 滾動大容器：拉高到 600vh，確保 5 個步驟 + 1 個結尾大圖都有充足的「滾動顯示完畢時間」 */
+        .scroll-container {
+            position: relative;
+            height: 600vh; 
+            margin-top: 50px;
+        }
+
+        /* 粘性定位框架：卡在畫面中間，用來展示疊加動畫 */
+        .sticky-frame {
+            position: sticky;
+            top: 10%;
+            height: 80vh;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* 每個步驟的基礎設定 */
+        .step-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            
+            /* 預設完全透明，並往下方稍微位移 */
+            opacity: 0;
+            transform: translateY(40px);
+            pointer-events: none;
+            
+            /* 滑動時的平滑轉場 */
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
             will-change: opacity, transform;
         }
 
-        /* 當滾動到該元素時，由 JavaScript 加上此 Class 觸發動畫 */
-        .fade-in-section.is-visible {
-            opacity: 1; /* 恢復透明度 */
-            transform: translateY(0); /* 回到原位 */
+        /* 當符合滾動區間時，套用 active 漸顯 */
+        .step-item.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* 圖片水平並排容器 */
+        .img-wrapper {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
-   <div class="content">
+    <!-- 網頁標題 -->
     <h1>七夕收涎儀式流程</h1>
-    
-    <!-- 步驟 1 -->
-    <div class="fade-in-section">
-        <p>1.準備祭拜織女的供桌跟七夕粿。</p>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <img src="web1.png" style="width: 50%">
-            <img src="web2.png" style="width: 50%">
+
+    <!-- 滾動大容器 -->
+    <div class="scroll-container">
+        <!-- 固定在畫面中間的展示框架 -->
+        <div class="sticky-frame">
+            
+           <!-- 步驟 1 (多張圖片依序漸顯疊加，不顯示文字) -->
+            <!-- 1. 工作區域 3 (最先出現) -->
+            <div class="step-item">
+                <div class="img-wrapper">
+                    <img src="工作區域 3.png" style="width: 50%">
+                </div>
+            </div>
+
+            <!-- 2. 工作區域 2 (與工作區域 3 相差 0.02 秒出現) -->
+            <div class="step-item" style="transition-delay: 0.02s;">
+                <div class="img-wrapper">
+                    <img src="工作區域 2.png" style="width: 50%">
+                </div>
+            </div>
+
+            <!-- 3. 工作區域 5 (接續出現，設定 0.04 秒延遲) -->
+            <div class="step-item" style="transition-delay: 0.04s;">
+                <div class="img-wrapper">
+                    <img src="工作區域 5.png" style="width: 50%">
+                </div>
+            </div>
+
+            <!-- 4. 工作區域 6 (相繼緊隨出現，設定 0.05 秒延遲) -->
+            <div class="step-item" style="transition-delay: 0.05s;">
+                <div class="img-wrapper">
+                    <img src="工作區域 6.png" style="width: 50%">
+                </div>
+            </div>
+
+            <!-- 5. 工作區域 1 (於 5 出現後 0.02 秒出現，即 0.04s + 0.02s = 0.06s 延遲) -->
+            <div class="step-item" style="transition-delay: 0.06s;">
+                <div class="img-wrapper">
+                    <img src="工作區域 1.png" style="width: 50%">
+                </div>
+            </div>
+
+            <!-- 6. 工作區域 4 (緊接在後，設定 0.07 秒延遲) -->
+            <div class="step-item" style="transition-delay: 0.07s;">
+                <div class="img-wrapper">
+                    <img src="工作區域 4.png" style="width: 50%">
+                </div>
+            </div>
+
+            <!-- 步驟 2 -->
+            <div class="step-item">
+                <p>2.讓小孩的雙腳跨在戶碇兩旁。</p>
+                <div class="img-wrapper">
+                    <img src="web3.png" style="width: 50%">
+                </div>
+            </div>
+
+            <!-- 步驟 3 -->
+            <div class="step-item">
+                <p>3.用七夕粿擦嘴。</p>
+                <div class="img-wrapper">
+                    <img src="web4.png" style="width: 50%">
+                </div>
+            </div>
+
+            <!-- 步驟 4 -->
+            <div class="step-item">
+                <p>4.讓小孩咬一小口七夕粿吐在地上，家長唸：「丟一口粿，死後入土，乎六畜吞入肚，保我兒孫無事故。」</p>
+                <div class="img-wrapper">
+                    <img src="web5.png" style="width: 50%">
+                </div>
+            </div>
+
+            <!-- 步驟 5 -->
+            <div class="step-item">
+                <p>5.祭拜完後焚燒金紙，將胭脂置於屋頂或牆角，給織女打扮使用</p>
+                <div class="img-wrapper">
+                    <img src="web5.png" style="width: 50%">
+                </div>
+            </div>
+
+            <!-- 結尾大圖 -->
+            <div class="step-item">
+                <div class="img-wrapper">
+                    <img src="webb.png" style="width: 100%">
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- 步驟 2 -->
-    <div class="fade-in-section">
-        <p>2.讓小孩的雙腳跨在戶碇兩旁。</p>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <img src="web3.png" style="width: 50%">
-        </div>
-    </div>
-
-    <!-- 步驟 3 -->
-    <div class="fade-in-section">
-        <p>3.用七夕粿擦嘴。</p>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <img src="web4.png" style="width: 50%">
-        </div>
-    </div>
-
-    <!-- 步驟 4 -->
-    <div class="fade-in-section">
-        <p>4.讓小孩咬一小口七夕粿吐在地上，家長唸：「丟一口粿，死後入土，乎六畜吞入肚，保我兒孫無事故。」</p>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <img src="web5.png" style="width: 50%">
-        </div>
-    </div>
-
-    <!-- 步驟 5 -->
-    <div class="fade-in-section">
-        <p>5.祭拜完後焚燒金紙，將胭脂置於屋頂或牆角，給織女打扮使用</p>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <img src="web5.png" style="width: 50%">
-        </div>
-    </div>
-
-    <!-- 結尾大圖 -->
-    <div class="fade-in-section">
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <img src="webb.png" style="width: 100%">
-        </div>
-    </div>
-      
-   </div> <!-- 補上 content 閉合標籤 -->
-
-    <!-- ==================== 
-       控制滾動偵測的 JavaScript 
-       ==================== -->
+    <!-- 滾動偵測 JavaScript -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // 建立滾動偵測器
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    // 當元素有 15% 進入畫面時就觸發動畫
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                    }
-                });
-            }, {
-                threshold: 0.15 // 觸發靈敏度（0.15 代表元素露出 15% 時觸發）
-            });
+        window.addEventListener('scroll', () => {
+            const container = document.querySelector('.scroll-container');
+            const steps = document.querySelectorAll('.step-item');
+            
+            if (!container || steps.length === 0) return;
 
-            // 自動尋找畫面上所有帶有 .fade-in-section 的區塊並開始偵測
-            const sections = document.querySelectorAll('.fade-in-section');
-            sections.forEach(sec => observer.observe(sec));
+            // 取得容器相對於視窗的座標
+            const rect = container.getBoundingClientRect();
+            
+            // 可滾動總高度（大容器高度減去視窗高度）
+            const scrollableHeight = rect.height - window.innerHeight;
+            
+            // 計算目前整體滾動進度比例 (0 ~ 1)
+            let progress = -rect.top / scrollableHeight;
+            progress = Math.max(0, Math.min(1, progress)); 
+
+            const stepCount = steps.length;
+
+            // 分配每個步驟的臨界值
+            // 例如有 6 個元素，區間分別是 0/6, 1/6, 2/6, 3/6, 4/6, 5/6...
+            // 使用者必須滾動超過該步驟的門檻，該步驟（及圖片）才會完全顯現。
+            steps.forEach((step, index) => {
+                const threshold = index / stepCount;
+
+                // 只要目前的滾動進度大於等於該步驟的門檻
+                // 該步驟就會 active 漸顯出現，且保留在畫面上不消失
+                if (progress >= threshold) {
+                    step.classList.add('active');
+                } else {
+                    step.classList.remove('active');
+                }
+            });
         });
     </script>
 </body>
