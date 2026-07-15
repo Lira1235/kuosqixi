@@ -140,6 +140,12 @@
             -webkit-backface-visibility: hidden;
         }
 
+        /* 專門讓過渡圖 7 能夠從下方滑上來，產生與步驟一底部的交疊感 */
+        .step-item.step-7-container {
+            align-items: flex-end; /* 對齊底部，使圖片緊貼視窗最下方 */
+            transform: translate3d(0, 100vh, 0); /* 初始置於視窗最下方（100vh） */
+        }
+
         .img-wrapper {
             width: 100%;
         }
@@ -205,9 +211,9 @@
                     </div>
                 </div>
 
-                <!-- 【階段四：過渡圖 7 放入群組，與步驟一享有完全一致的隨滑上移邏輯】 -->
-                <!-- 7. 工作區域 7 (z-index 設為 2，層級最底) -->
-                <div class="step-item step-7" style="z-index: 2;">
+                <!-- 【階段四：過渡圖 7 放入群組，設定為特別容器，使其能夠從視窗下方產生交疊並由下往上推入】 -->
+                <!-- 7. 工作區域 7 (z-index 設為 2，層級在步驟一 1~6 之下) -->
+                <div class="step-item step-7-container step-7" style="z-index: 2;">
                     <div class="img-wrapper">
                         <img src="工作區域 7.png" decoding="async">
                     </div>
@@ -372,17 +378,17 @@
                     img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
                 }
 
-                // 階段四：過渡圖 7 出現（採用與步驟一 1~6 相同的滑入曲線）
-                const img7Opacity = getInterpolatedValue(progress1, 0.60, 0.78, 0, 1);
-                const img7Y = getInterpolatedValue(progress1, 0.60, 0.82, 40, 0);
+                // 階段四：過渡圖 7 出現（從 100vh 視窗底部由下往上滑移推入）
+                // 隨著滾動，其 Y 軸偏移從 100vh 縮小至 0，使其緊貼並自然交疊在步驟一最下方
+                const img7Opacity = getInterpolatedValue(progress1, 0.55, 0.75, 0, 1);
+                const img7Y = getInterpolatedValue(progress1, 0.55, 0.78, window.innerHeight, 0);
                 if (img7) {
                     img7.style.opacity = img7Opacity;
                     img7.style.transform = `translate3d(0, ${img7Y}px, 0)`;
                 }
 
-                // 階段五：待 1~7 顯示完畢後，整個群組（包含過渡圖 7）一起往上滑移移出
-                // 這達成了過渡圖 7 與步驟一滑動邏輯的完美統一！
-                const groupTranslateY = getInterpolatedValue(progress1, 0.80, 1.00, 0, -100);
+                // 階段五：待 1~7 顯示完畢後，整個群組（包含最底層交疊好的過渡圖 7）一起往上滑移移出
+                const groupTranslateY = getInterpolatedValue(progress1, 0.82, 1.00, 0, -100);
                 if (imagesGroup1) {
                     imagesGroup1.style.transform = `translate3d(0, ${groupTranslateY}vh, 0)`;
                 }
@@ -449,8 +455,7 @@
                     imagesGroup2.style.transform = `translate3d(0, ${groupTranslateY2}vh, 0)`;
                 }
 
-                // 6. 9 與 11 同步緩緩上移進入中央漸顯
-                // 【優化】滑動距離再度縮短：初始位移設定為極輕微的 20px，使過渡感更加柔和。
+                // 6. 9 與 11 同步緩緩上移進入中央漸顯 (初始位移設定為極輕微的 20px)
                 let img9_11Y = getInterpolatedValue(progress2, 0.48, 0.72, 20, 0);
                 const img9_11Opacity = getInterpolatedValue(progress2, 0.48, 0.67, 0, 1);
 
