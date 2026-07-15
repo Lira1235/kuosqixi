@@ -113,7 +113,7 @@
             transform: translate3d(0, 80px, 0); 
             pointer-events: none;
             
-            /* 配合 0.01 秒的極小間隔，將漸顯過渡調至更流暢緊湊的 0.8s */
+            /* 配合時間差，將漸顯過渡調至更流暢緊湊的 0.8s */
             transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
             
             will-change: opacity, transform;
@@ -155,7 +155,7 @@
             </div>
 
             <!-- 2. 工作區域 2 
-                 出現順序：第一階段（與 3 相差 0.02s，維持原設定）
+                 出現順序：第一階段（與 3 相差 0.02s）
                  疊加順序：最底層 (z-index: 5) -->
             <div class="step1-item step-group-1" style="transition-delay: 0.02s; z-index: 5;">
                 <div class="img-wrapper">
@@ -175,29 +175,29 @@
             </div>
 
             <!-- 4. 工作區域 6 
-                 出現順序：第二階段（與 5 相差 0.03s，維持原設定）
+                 出現順序：第二階段（延遲增加 0.05s 變為 0.08s）
                  疊加順序：第三層 (z-index: 8) -->
-            <div class="step1-item step-group-2-A" style="transition-delay: 0.03s; z-index: 8;">
+            <div class="step1-item step-group-2-A" style="transition-delay: 0.08s; z-index: 8;">
                 <div class="img-wrapper">
                     <img src="工作區域 6.png">
                 </div>
             </div>
 
 
-            <!-- 【階段三：增加滑動間隔後，最後顯現（1、4 後出）】 -->
+            <!-- 【階段三：增加滑動間隔後，最後顯現（1、4 後出，並拉開兩者間隔）】 -->
             <!-- 5. 工作區域 1 
-                 出現順序：第三階段（延遲縮短為 0.01s）
+                 出現順序：第三階段（延遲維持 0.01s）
                  疊加順序：第四層 (z-index: 7) -->
-            <div class="step1-item step-group-2-B" style="transition-delay: 0.01s; z-index: 7;">
+            <div class="step1-item style-1 step-group-2-B" style="transition-delay: 0.01s; z-index: 7;">
                 <div class="img-wrapper">
                     <img src="工作區域 1.png">
                 </div>
             </div>
 
             <!-- 6. 工作區域 4 
-                 出現順序：第三階段（延遲縮短為 0.01s）
+                 出現順序：第三階段（延遲拉大到 0.05s，使出現時間錯開）
                  疊加順序：第五層 (z-index: 6) -->
-            <div class="step1-item step-group-2-B" style="transition-delay: 0.01s; z-index: 6;">
+            <div class="step1-item style-4 step-group-2-B" style="transition-delay: 0.05s; z-index: 6;">
                 <div class="img-wrapper">
                     <img src="工作區域 4.png">
                 </div>
