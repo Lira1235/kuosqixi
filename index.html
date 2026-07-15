@@ -14,53 +14,65 @@
             min-height: 100vh;
             background-color: #a24731;
             margin: 0;
-            padding: 20px;
+            padding: 10px; /* 手機版稍微縮小內距，讓畫面更滿 */
             font-family: sans-serif;
         }
 
-        /* 標題樣式 */
+        /* 標題樣式：強制顯示在同一列，並針對手機寬度自動縮小字體 */
         h1 {
             text-align: center;
             color: #e99e9d;
-            font-size: 60px;
-            margin-top: 40px;
+            font-size: 8vw; /* 使用 vw 單位讓字型隨螢幕寬度自動縮放 */
+            max-size: 60px; /* 電腦版最大限制為 60px */
+            margin-top: 30px;
             margin-bottom: 20px;
+            white-space: nowrap; /* 強制不換行，顯示於同一列 */
+            letter-spacing: 2px; /* 稍微縮小字距確保塞得下 */
+        }
+
+        /* 電腦版時固定 H1 最大大小 */
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 50px;
+            }
         }
 
         /* 段落文字樣式 */
         p {
             text-align: left;
-            font-size: 25px;
-            line-height: 1.6;
+            font-size: 20px;
+            line-height: 1.5;
             color: #ffffff;
             margin-bottom: 10px;
+            padding: 0 10px;
         }
 
-        /* 圖片基本設定與陰影（疊加時更有層次感） */
+        /* 圖片基本設定（無圓角、無陰影、完全符合手機寬度） */
         img {
-            border-radius: 15px;
-            margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); 
+            border-radius: 0px; 
+            margin-top: 10px;
+            width: 100% !important; 
+            height: auto;
+            box-shadow: none; /* 已移除陰影 */
         }
 
         /* ==========================================
            滾動疊加核心 CSS 
         ========================================== */
         
-        /* 滾動大容器：拉高到 600vh，確保 5 個步驟 + 1 個結尾大圖都有充足的「滾動顯示完畢時間」 */
+        /* 滾動大容器 */
         .scroll-container {
             position: relative;
             height: 600vh; 
-            margin-top: 50px;
+            margin-top: 30px;
         }
 
-        /* 粘性定位框架：卡在畫面中間，用來展示疊加動畫 */
+        /* 粘性定位框架：移除最大寬度限制，在手機上完全滿版 */
         .sticky-frame {
             position: sticky;
-            top: 10%;
-            height: 80vh;
+            top: 5%;
+            height: 90vh;
             width: 100%;
-            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -93,10 +105,9 @@
             pointer-events: auto;
         }
 
-        /* 圖片水平並排容器 */
+        /* 圖片水平並排容器（手機滿版，無間隔） */
         .img-wrapper {
             display: flex;
-            gap: 15px;
             justify-content: center;
             width: 100%;
         }
@@ -104,7 +115,7 @@
 </head>
 <body>
 
-    <!-- 網頁標題 -->
+    <!-- 網頁標題（已設定強制同一列） -->
     <h1>七夕收涎儀式流程</h1>
 
     <!-- 滾動大容器 -->
@@ -112,46 +123,46 @@
         <!-- 固定在畫面中間的展示框架 -->
         <div class="sticky-frame">
             
-           <!-- 步驟 1 (多張圖片依序漸顯疊加，不顯示文字) -->
+            <!-- 步驟 1 (多張圖片依序漸顯疊加，不顯示文字) -->
             <!-- 1. 工作區域 3 (最先出現) -->
             <div class="step-item">
                 <div class="img-wrapper">
-                    <img src="工作區域 3.png" style="width: 50%">
+                    <img src="工作區域 3.png">
                 </div>
             </div>
 
             <!-- 2. 工作區域 2 (與工作區域 3 相差 0.02 秒出現) -->
             <div class="step-item" style="transition-delay: 0.02s;">
                 <div class="img-wrapper">
-                    <img src="工作區域 2.png" style="width: 50%">
+                    <img src="工作區域 2.png">
                 </div>
             </div>
 
             <!-- 3. 工作區域 5 (接續出現，設定 0.04 秒延遲) -->
             <div class="step-item" style="transition-delay: 0.04s;">
                 <div class="img-wrapper">
-                    <img src="工作區域 5.png" style="width: 50%">
+                    <img src="工作區域 5.png">
                 </div>
             </div>
 
             <!-- 4. 工作區域 6 (相繼緊隨出現，設定 0.05 秒延遲) -->
             <div class="step-item" style="transition-delay: 0.05s;">
                 <div class="img-wrapper">
-                    <img src="工作區域 6.png" style="width: 50%">
+                    <img src="工作區域 6.png">
                 </div>
             </div>
 
-            <!-- 5. 工作區域 1 (於 5 出現後 0.02 秒出現，即 0.04s + 0.02s = 0.06s 延遲) -->
+            <!-- 5. 工作區域 1 (於 5 出現後 0.02 秒出現，即 0.06s 延遲) -->
             <div class="step-item" style="transition-delay: 0.06s;">
                 <div class="img-wrapper">
-                    <img src="工作區域 1.png" style="width: 50%">
+                    <img src="工作區域 1.png">
                 </div>
             </div>
 
             <!-- 6. 工作區域 4 (緊接在後，設定 0.07 秒延遲) -->
             <div class="step-item" style="transition-delay: 0.07s;">
                 <div class="img-wrapper">
-                    <img src="工作區域 4.png" style="width: 50%">
+                    <img src="工作區域 4.png">
                 </div>
             </div>
 
@@ -159,7 +170,7 @@
             <div class="step-item">
                 <p>2.讓小孩的雙腳跨在戶碇兩旁。</p>
                 <div class="img-wrapper">
-                    <img src="web3.png" style="width: 50%">
+                    <img src="web3.png">
                 </div>
             </div>
 
@@ -167,7 +178,7 @@
             <div class="step-item">
                 <p>3.用七夕粿擦嘴。</p>
                 <div class="img-wrapper">
-                    <img src="web4.png" style="width: 50%">
+                    <img src="web4.png">
                 </div>
             </div>
 
@@ -175,7 +186,7 @@
             <div class="step-item">
                 <p>4.讓小孩咬一小口七夕粿吐在地上，家長唸：「丟一口粿，死後入土，乎六畜吞入肚，保我兒孫無事故。」</p>
                 <div class="img-wrapper">
-                    <img src="web5.png" style="width: 50%">
+                    <img src="web5.png">
                 </div>
             </div>
 
@@ -183,14 +194,14 @@
             <div class="step-item">
                 <p>5.祭拜完後焚燒金紙，將胭脂置於屋頂或牆角，給織女打扮使用</p>
                 <div class="img-wrapper">
-                    <img src="web5.png" style="width: 50%">
+                    <img src="web5.png">
                 </div>
             </div>
 
             <!-- 結尾大圖 -->
             <div class="step-item">
                 <div class="img-wrapper">
-                    <img src="webb.png" style="width: 100%">
+                    <img src="webb.png">
                 </div>
             </div>
 
@@ -218,13 +229,10 @@
             const stepCount = steps.length;
 
             // 分配每個步驟的臨界值
-            // 例如有 6 個元素，區間分別是 0/6, 1/6, 2/6, 3/6, 4/6, 5/6...
-            // 使用者必須滾動超過該步驟的門檻，該步驟（及圖片）才會完全顯現。
             steps.forEach((step, index) => {
                 const threshold = index / stepCount;
 
-                // 只要目前的滾動進度大於等於該步驟的門檻
-                // 該步驟就會 active 漸顯出現，且保留在畫面上不消失
+                // 只要目前的滾動進度大於等於該步驟的門檻就顯示（疊加不消失）
                 if (progress >= threshold) {
                     step.classList.add('active');
                 } else {
