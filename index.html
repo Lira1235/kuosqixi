@@ -110,14 +110,12 @@
             
             /* 預設完全隱藏 */
             opacity: 0;
-            /* 💡 優化 1：改用 translate3d 啟用 GPU 顯示卡加速，防止手機端滾動手感抖動 */
             transform: translate3d(0, 80px, 0); 
             pointer-events: none;
             
-            /* 💡 優化 2：改用更溫和、符合物理感官的緩動曲線 (quintic out 曲線) */
-            transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            /* 配合 0.01 秒的極小間隔，將漸顯過渡調至更流暢緊湊的 0.8s */
+            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
             
-            /* 💡 優化 3：告知瀏覽器為這些屬性預留硬體資源 */
             will-change: opacity, transform;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
@@ -157,7 +155,7 @@
             </div>
 
             <!-- 2. 工作區域 2 
-                 出現順序：第一階段（與 3 相差 0.02s）
+                 出現順序：第一階段（與 3 相差 0.02s，維持原設定）
                  疊加順序：最底層 (z-index: 5) -->
             <div class="step1-item step-group-1" style="transition-delay: 0.02s; z-index: 5;">
                 <div class="img-wrapper">
@@ -177,7 +175,7 @@
             </div>
 
             <!-- 4. 工作區域 6 
-                 出現順序：第二階段（與 5 相差 0.03s）
+                 出現順序：第二階段（與 5 相差 0.03s，維持原設定）
                  疊加順序：第三層 (z-index: 8) -->
             <div class="step1-item step-group-2-A" style="transition-delay: 0.03s; z-index: 8;">
                 <div class="img-wrapper">
@@ -188,18 +186,18 @@
 
             <!-- 【階段三：增加滑動間隔後，最後顯現（1、4 後出）】 -->
             <!-- 5. 工作區域 1 
-                 出現順序：第三階段（延遲 0.02s）
+                 出現順序：第三階段（延遲縮短為 0.01s）
                  疊加順序：第四層 (z-index: 7) -->
-            <div class="step1-item step-group-2-B" style="transition-delay: 0.02s; z-index: 7;">
+            <div class="step1-item step-group-2-B" style="transition-delay: 0.01s; z-index: 7;">
                 <div class="img-wrapper">
                     <img src="工作區域 1.png">
                 </div>
             </div>
 
             <!-- 6. 工作區域 4 
-                 出現順序：第三階段（延遲 0.02s）
+                 出現順序：第三階段（延遲縮短為 0.01s）
                  疊加順序：第五層 (z-index: 6) -->
-            <div class="step1-item step-group-2-B" style="transition-delay: 0.02s; z-index: 6;">
+            <div class="step1-item step-group-2-B" style="transition-delay: 0.01s; z-index: 6;">
                 <div class="img-wrapper">
                     <img src="工作區域 4.png">
                 </div>
@@ -254,7 +252,7 @@
 
     <!-- 滾動偵測 JavaScript -->
     <script>
-        window.addEventListener('scroll', () => {
+        function handleScroll() {
             const container = document.querySelector('.step1-scroll-container');
             const group1 = document.querySelectorAll('.step-group-1');
             const group2A = document.querySelectorAll('.step-group-2-A');
@@ -273,8 +271,16 @@
             let progress = -rect.top / scrollableHeight;
             progress = Math.max(0, Math.min(1, progress)); 
 
+            // =======================================================
+            // 💡 滾動進度分配（微調第一階段門檻，避免初始載入時誤觸）：
+            // - 第一階段 (進度 >= 22%)：觸發 2、3（保證網頁剛載入時不出現圖片）
+            // - 第二階段 (進度 >= 40%)：觸發 5、6
+            // - 第三階段 (進度 >= 60%)：觸發 1、4
+            // - 第四階段 (進度 >= 80%)：觸發 7（過渡圖疊在最上層覆蓋）
+            // =======================================================
+            
             // 第一組判定 (工作區域 2, 3)
-            if (progress >= 0.20) {
+            if (progress >= 0.22) {
                 group1.forEach(step => step.classList.add('active'));
             } else {
                 group1.forEach(step => step.classList.remove('active'));
@@ -300,7 +306,12 @@
             } else {
                 groupTransit.forEach(step => step.classList.remove('active'));
             }
-        });
+        }
+
+        // 綁定滾動事件
+        window.addEventListener('scroll', handleScroll);
+        // 頁面載入時先執行一次，確保初始狀態正確
+        window.addEventListener('DOMContentLoaded', handleScroll);
     </script>
 </body>
 </html>
