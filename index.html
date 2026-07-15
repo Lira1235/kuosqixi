@@ -113,8 +113,9 @@
             display: flex;
             align-items: flex-start;
             opacity: 0; /* 預設完全隱藏，由 JS 物理滾動控制 */
+            transform: translate3d(0, 80px, 0); /* 預設在下方 80px，由 JS 動態減少到位移 0 */
             pointer-events: none;
-            /* 移除 transition 改為 JS 純物理滾動數值控制，不拖泥帶水 */
+            /* 移除所有 CSS transition，確保 100% 由物理手指滾動精確控制 */
             transition: none; 
             will-change: opacity, transform;
             backface-visibility: hidden;
@@ -269,14 +270,15 @@
 
             // =======================================================
             // 2. 階段一：工作區域 3 & 工作區域 2 (15% -> 45%)
-            // - 3.png：淡入 (0->1)，往上平移 (80px -> 0px)
-            // - 2.png：物理延後出現（在 20% -> 45% 區間），淡入，平移 (80px -> 0px)
+            // - 3.png：淡入 (0->1)，物理上移 (80px -> 0px)
+            // - 2.png：物理延後出現（在 20% -> 45% 區間），淡入，物理上移 (80px -> 0px)
             // =======================================================
             const img3Opacity = getInterpolatedValue(progress, 0.15, 0.35, 0, 1);
             const img3Y = getInterpolatedValue(progress, 0.15, 0.35, 80, 0);
             if (img3) {
                 img3.style.opacity = img3Opacity;
                 img3.style.transform = `translate3d(0, ${img3Y}px, 0)`;
+                img3.style.pointerEvents = img3Opacity > 0.1 ? 'auto' : 'none';
             }
 
             const img2Opacity = getInterpolatedValue(progress, 0.20, 0.45, 0, 1);
@@ -284,18 +286,20 @@
             if (img2) {
                 img2.style.opacity = img2Opacity;
                 img2.style.transform = `translate3d(0, ${img2Y}px, 0)`;
+                img2.style.pointerEvents = img2Opacity > 0.1 ? 'auto' : 'none';
             }
 
             // =======================================================
             // 3. 階段二：工作區域 5 & 工作區域 6 (35% -> 65%)
-            // - 5.png：淡入 (0->1)，往上平移 (80px -> 0px)
-            // - 6.png：物理延後出現（在 40% -> 65% 區間），淡入，平移 (80px -> 0px)
+            // - 5.png：淡入 (0->1)，物理上移 (80px -> 0px)
+            // - 6.png：物理延後出現（在 40% -> 65% 區間），淡入，物理上移 (80px -> 0px)
             // =======================================================
             const img5Opacity = getInterpolatedValue(progress, 0.35, 0.55, 0, 1);
             const img5Y = getInterpolatedValue(progress, 0.35, 0.55, 80, 0);
             if (img5) {
                 img5.style.opacity = img5Opacity;
                 img5.style.transform = `translate3d(0, ${img5Y}px, 0)`;
+                img5.style.pointerEvents = img5Opacity > 0.1 ? 'auto' : 'none';
             }
 
             const img6Opacity = getInterpolatedValue(progress, 0.40, 0.65, 0, 1);
@@ -303,19 +307,21 @@
             if (img6) {
                 img6.style.opacity = img6Opacity;
                 img6.style.transform = `translate3d(0, ${img6Y}px, 0)`;
+                img6.style.pointerEvents = img6Opacity > 0.1 ? 'auto' : 'none';
             }
 
             // =======================================================
             // 4. 階段三：工作區域 1 & 工作區域 4 (55% -> 85%)
-            // - 兩者位移量皆為較短的 30px。
-            // - 1.png：淡入，平移 (30px -> 0px)
-            // - 4.png：物理稍微延後出現（在 60% -> 85% 區間），淡入，平移 (30px -> 0px)
+            // - 兩者位移量皆為較短的 30px，且包含當初微調的 0.02s 物理延遲（延後 5% 的滾動進度）
+            // - 1.png：淡入，物理上移 (30px -> 0px)
+            // - 4.png：物理延後出現（在 60% -> 85% 區間），淡入，物理上移 (30px -> 0px)
             // =======================================================
             const img1Opacity = getInterpolatedValue(progress, 0.55, 0.75, 0, 1);
             const img1Y = getInterpolatedValue(progress, 0.55, 0.75, 30, 0);
             if (img1) {
                 img1.style.opacity = img1Opacity;
                 img1.style.transform = `translate3d(0, ${img1Y}px, 0)`;
+                img1.style.pointerEvents = img1Opacity > 0.1 ? 'auto' : 'none';
             }
 
             const img4Opacity = getInterpolatedValue(progress, 0.60, 0.85, 0, 1);
@@ -323,16 +329,19 @@
             if (img4) {
                 img4.style.opacity = img4Opacity;
                 img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
+                img4.style.pointerEvents = img4Opacity > 0.1 ? 'auto' : 'none';
             }
 
             // =======================================================
             // 5. 過渡圖 7 物理淡入 & 步驟一粘性框上滑移出 (75% -> 100%)
-            // - 過渡圖 7：在滾動 75% -> 95% 時，透明度依物理距離漸顯 (0 -> 1)
+            // - 過渡圖 7：在滾動 75% -> 95% 時，依物理距離漸顯 (0 -> 1)，且始終維持最高 z-index: 12 的遮罩定位
             // - 粘性框架：在滾動 75% -> 100% 時，整體平滑上推 0vh -> -100vh
             // =======================================================
             const img7Opacity = getInterpolatedValue(progress, 0.75, 0.95, 0, 1);
             if (img7) {
                 img7.style.opacity = img7Opacity;
+                img7.style.transform = `translate3d(0, 0, 0)`; // 讓過渡圖貼緊視窗
+                img7.style.pointerEvents = img7Opacity > 0.1 ? 'auto' : 'none';
             }
 
             const frameTranslateY = getInterpolatedValue(progress, 0.75, 1.00, 0, -100);
