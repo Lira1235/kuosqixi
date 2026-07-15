@@ -84,7 +84,7 @@
         /* 步驟一專屬滾動容器 */
         .step1-scroll-container {
             position: relative;
-            height: 350vh; 
+            height: 400vh; /* 稍微拉長總高度，讓多段滑動手感更細緻 */
             width: 100%;
             margin-top: -100vh; /* 與標題重合定位，達到無縫滾動效果 */
         }
@@ -113,7 +113,7 @@
             transform: translateY(100px); 
             pointer-events: none;
             
-            /* 過渡時間延長至 1.2s，實現更溫和細緻的慢速升起與漸顯 */
+            /* 過渡時間 1.2s，慢速升起與漸顯 */
             transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: opacity, transform;
         }
@@ -161,11 +161,11 @@
             </div>
 
 
-            <!-- 【階段二：下一次滑動顯現（與第一組間隔縮小）】 -->
+            <!-- 【階段二：下一次滑動顯現（5、6 先出）】 -->
             <!-- 3. 工作區域 5 
                  出現順序：第二階段（最先，延遲 0s）
                  疊加順序：第二層 (z-index: 9) -->
-            <div class="step1-item step-group-2" style="z-index: 9;">
+            <div class="step1-item step-group-2-A" style="z-index: 9;">
                 <div class="img-wrapper">
                     <img src="工作區域 5.png">
                 </div>
@@ -174,25 +174,27 @@
             <!-- 4. 工作區域 6 
                  出現順序：第二階段（與 5 相差 0.03s）
                  疊加順序：第三層 (z-index: 8) -->
-            <div class="step1-item step-group-2" style="transition-delay: 0.03s; z-index: 8;">
+            <div class="step1-item step-group-2-A" style="transition-delay: 0.03s; z-index: 8;">
                 <div class="img-wrapper">
                     <img src="工作區域 6.png">
                 </div>
             </div>
 
+
+            <!-- 【階段三：增加滑動間隔後，最後顯現（1、4 後出）】 -->
             <!-- 5. 工作區域 1 
-                 出現順序：第二階段（與 5 相差 0.02s）
+                 出現順序：第三階段（延遲 0.02s）
                  疊加順序：第四層 (z-index: 7) -->
-            <div class="step1-item step-group-2" style="transition-delay: 0.02s; z-index: 7;">
+            <div class="step1-item step-group-2-B" style="transition-delay: 0.02s; z-index: 7;">
                 <div class="img-wrapper">
                     <img src="工作區域 1.png">
                 </div>
             </div>
 
             <!-- 6. 工作區域 4 
-                 出現順序：第二階段（與 5 相差 0.02s）
+                 出現順序：第三階段（延遲 0.02s）
                  疊加順序：第五層 (z-index: 6) -->
-            <div class="step1-item step-group-2" style="transition-delay: 0.02s; z-index: 6;">
+            <div class="step1-item step-group-2-B" style="transition-delay: 0.02s; z-index: 6;">
                 <div class="img-wrapper">
                     <img src="工作區域 4.png">
                 </div>
@@ -239,7 +241,8 @@
         window.addEventListener('scroll', () => {
             const container = document.querySelector('.step1-scroll-container');
             const group1 = document.querySelectorAll('.step-group-1');
-            const group2 = document.querySelectorAll('.step-group-2');
+            const group2A = document.querySelectorAll('.step-group-2-A');
+            const group2B = document.querySelectorAll('.step-group-2-B');
             
             if (!container) return;
 
@@ -254,9 +257,10 @@
             progress = Math.max(0, Math.min(1, progress)); 
 
             // =======================================================
-            // 💡 縮短滑動間隔調整：
-            // - 第一組 (2, 3) 依舊在進度 25% (0.25) 觸發
-            // - 第二組 (5, 6, 1, 4) 提前至進度 45% (0.45) 觸發 (原先為 65%)
+            // 💡 滑動間隔精準控制：
+            // - 第一階段 (進度 25%)：觸發 2、3（緊湊出現）
+            // - 第二階段 (進度 45%)：觸發 5、6（與前一組滑動間隔小）
+            // - 第三階段 (進度 65%)：觸發 1、4（與 5 之間滑動間隔拉大）
             // =======================================================
             
             // 第一組判定 (工作區域 2, 3)
@@ -266,11 +270,18 @@
                 group1.forEach(step => step.classList.remove('active'));
             }
 
-            // 第二組判定 (工作區域 5, 6, 1, 4)
+            // 第二組 A 判定 (工作區域 5, 6)
             if (progress >= 0.45) {
-                group2.forEach(step => step.classList.add('active'));
+                group2A.forEach(step => step.classList.add('active'));
             } else {
-                group2.forEach(step => step.classList.remove('active'));
+                group2A.forEach(step => step.classList.remove('active'));
+            }
+
+            // 第二組 B 判定 (工作區域 1, 4)
+            if (progress >= 0.65) {
+                group2B.forEach(step => step.classList.add('active'));
+            } else {
+                group2B.forEach(step => step.classList.remove('active'));
             }
         });
     </script>
