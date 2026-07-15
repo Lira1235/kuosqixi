@@ -140,15 +140,6 @@
             -webkit-backface-visibility: hidden;
         }
 
-        /* 步驟二專屬：步驟字樣樣式 */
-        .step-text-p {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            z-index: 40; /* 確保文字在最上層 */
-            pointer-events: none;
-        }
-
         .img-wrapper {
             width: 100%;
         }
@@ -216,7 +207,7 @@
 
             </div>
 
-            <!-- 【階段四：過渡圖 7 疊加在下方，待 1~6 號顯示完畢後才滑入】 -->
+            <!-- 【階段四：過渡圖 7 交疊在下方，隨物理滑動優雅推入】 -->
             <!-- 7. 工作區域 7 -->
             <div class="step-item step-7" style="z-index: 2;">
                 <div class="img-wrapper">
@@ -230,9 +221,6 @@
 
     <!-- ─── 步驟二：獨立滾動疊加區 ─── -->
     <div class="step-scroll-container step2-scroll-container">
-        
-        <!-- 步驟二文字說明（隨滾動跟著容器上移） -->
-        <p class="step-text-p">2.讓小孩的雙腳跨在戶碇兩旁。</p>
 
         <div class="step-sticky-frame step2-sticky-frame">
 
@@ -240,7 +228,7 @@
             <div class="step-images-group step2-images-group">
 
                 <!-- 【階段一：13 先出現】 -->
-                <!-- z-index: 14 (靠近使用者第 2 層) -->
+                <!-- z-index: 14 -->
                 <div class="step-item step-13" style="z-index: 14;">
                     <div class="img-wrapper">
                         <img src="工作區域 13.png" decoding="async">
@@ -248,7 +236,7 @@
                 </div>
 
                 <!-- 【階段二：12 出現】 -->
-                <!-- z-index: 15 (最靠近使用者，最前層) -->
+                <!-- z-index: 15 -->
                 <div class="step-item step-12" style="z-index: 15;">
                     <div class="img-wrapper">
                         <img src="工作區域 12.png" decoding="async">
@@ -256,7 +244,7 @@
                 </div>
 
                 <!-- 【階段三：10 出現】 -->
-                <!-- z-index: 12 (靠後第 4 層) -->
+                <!-- z-index: 12 -->
                 <div class="step-item step-10" style="z-index: 12;">
                     <div class="img-wrapper">
                         <img src="工作區域 10.png" decoding="async">
@@ -264,7 +252,7 @@
                 </div>
 
                 <!-- 【階段四：14 出現】 -->
-                <!-- z-index: 11 (層級介於 10 與 9 之間) -->
+                <!-- z-index: 11 -->
                 <div class="step-item step-14" style="z-index: 11;">
                     <div class="img-wrapper">
                         <img src="工作區域 14.png" decoding="async">
@@ -273,15 +261,15 @@
 
             </div>
 
-            <!-- 【階段五：過渡同步圖 9 與 11 疊加在下方，隨物理滑動由下往上移入並漸顯】 -->
-            <!-- 9. 工作區域 9 （z-index: 10，最後最底） -->
+            <!-- 【階段五：過渡同步圖 9 與 11 疊加在下方】 -->
+            <!-- 9. 工作區域 9 -->
             <div class="step-item step-9" style="z-index: 10;">
                 <div class="img-wrapper">
                     <img src="工作區域 9.png" decoding="async">
                 </div>
             </div>
 
-            <!-- 11. 工作區域 11 （z-index: 13，靠後第 3 層） -->
+            <!-- 11. 工作區域 11 -->
             <div class="step-item step-11" style="z-index: 13;">
                 <div class="img-wrapper">
                     <img src="工作區域 11.png" decoding="async">
@@ -396,11 +384,12 @@
                     imagesGroup1.style.transform = `translate3d(0, ${groupTranslateY}vh, 0)`;
                 }
 
-                // 過渡圖 7 由下往上推入並漸顯
-                let img7Y = getInterpolatedValue(progress1, 0.60, 0.82, 120, 0);
+                // 【優化】過渡圖 7 完美套用微幅（40px）上移進度
+                // 隨著進度（0.60 -> 0.82）同步由下往上緩緩推入並漸顯，確保交疊動作自然流暢
+                let img7Y = getInterpolatedValue(progress1, 0.60, 0.82, 40, 0);
                 const img7Opacity = getInterpolatedValue(progress1, 0.60, 0.78, 0, 1);
 
-                // 過渡圖 7 被推至螢幕頂端並移出螢幕
+                // 當進度大於 0.85 時，過渡圖 7 隨著整體滾動一起被推至頂端移出螢幕
                 if (progress1 >= 0.85) {
                     img7Y = getInterpolatedValue(progress1, 0.85, 1.00, 0, -100 * window.innerHeight / 100); 
                 }
@@ -447,7 +436,7 @@
                     img13.style.transform = `translate3d(0, ${img13Y}px, 0)`;
                 }
 
-                // 2. 出現 12 (滾動進度：0.09 -> 0.19，與 13 的出現間隔完美設為緊湊的 0.04)
+                // 2. 出現 12 (滾動進度：0.09 -> 0.19，與 13 的出現間隔設為 0.04)
                 const img12Opacity = getInterpolatedValue(progress2, 0.09, 0.19, 0, 1);
                 const img12Y = getInterpolatedValue(progress2, 0.09, 0.19, 80, 0);
                 if (img12) {
@@ -463,7 +452,7 @@
                     img10.style.transform = `translate3d(0, ${img10Y}px, 0)`;
                 }
 
-                // 4. 出現 14 (滾動進度：0.25 -> 0.35，與 10 的出現間隔完美設為緊湊的 0.03)
+                // 4. 出現 14 (滾動進度：0.25 -> 0.35，與 10 的出現間隔設為 0.03)
                 const img14Opacity = getInterpolatedValue(progress2, 0.25, 0.35, 0, 1);
                 const img14Y = getInterpolatedValue(progress2, 0.25, 0.35, 80, 0);
                 if (img14) {
@@ -471,18 +460,17 @@
                     img14.style.transform = `translate3d(0, ${img14Y}px, 0)`;
                 }
 
-                // 5. 整個步驟二群組 (13, 12, 10, 14) 往上滑移移出 (當 14 穩定出現後，於進度 0.48 -> 0.72 滑出)
+                // 5. 整個步驟二群組 (13, 12, 10, 14) 往上滑移移出
                 const groupTranslateY2 = getInterpolatedValue(progress2, 0.48, 0.72, 0, -100);
                 if (imagesGroup2) {
                     imagesGroup2.style.transform = `translate3d(0, ${groupTranslateY2}vh, 0)`;
                 }
 
-                // 6. 9 與 11 同步緩緩上移進入中央漸顯
-                // 【優化】上移起步偏移從 120px 縮小至 40px，讓滑行感覺更加平緩精緻！
+                // 6. 9 與 11 同步緩緩上移進入中央漸顯 (微幅偏移 40px)
                 let img9_11Y = getInterpolatedValue(progress2, 0.48, 0.72, 40, 0);
                 const img9_11Opacity = getInterpolatedValue(progress2, 0.48, 0.67, 0, 1);
 
-                // 7. 【物理隨動上移】當滾動大於 0.80 時，讓 9 與 11 一起隨物理滾動滑出頂端 (0.80 -> 1.00)
+                // 7. 當滾動大於 0.80 時，讓 9 與 11 一起隨物理滾動滑出頂端 (0.80 -> 1.00)
                 if (progress2 >= 0.80) {
                     img9_11Y = getInterpolatedValue(progress2, 0.80, 1.00, 0, -100 * window.innerHeight / 100);
                 }
