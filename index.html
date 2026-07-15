@@ -20,7 +20,7 @@
             overflow-x: hidden;
         }
 
-        /* 標題區塊：剛進網頁時滿版（100vh），只有文字，完全無圖片 */
+        /* 標題區塊：剛進網頁時滿版（100vh），完全無圖片 */
         .title-container {
             display: flex;
             justify-content: center;
@@ -30,9 +30,13 @@
             height: 100dvh;
             box-sizing: border-box;
             padding: 0 20px;
-            position: relative;
-            z-index: 20; /* 確保在最上層覆蓋圖片 */
-            background-color: transparent; /* 保持背景圖看得到 */
+            position: fixed; /* 改為 fixed 配合物理淡出，使其在第一階段能跟隨滾動平滑上移消失 */
+            top: 0;
+            left: 0;
+            z-index: 20; 
+            background-color: transparent;
+            pointer-events: none; /* 避免阻擋下方滾動 */
+            will-change: opacity, transform;
         }
 
         h1 {
@@ -85,9 +89,8 @@
         /* 步驟一專屬滾動容器 */
         .step1-scroll-container {
             position: relative;
-            height: 480vh; /* 微增高度，讓物理滑動行程更平穩 */
+            height: 500vh; /* 提供足夠的物理滾動距離 */
             width: 100%;
-            margin-top: -100vh; /* 與標題重合定位，達到無縫滾動效果 */
         }
 
         /* 粘性定位框架：完全貼合手機螢幕 */
@@ -97,8 +100,6 @@
             height: 100vh;
             height: 100dvh;
             width: 100%;
-            /* 新增 transition 讓步驟一整體上移時保持平滑 */
-            transition: transform 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
             will-change: transform;
         }
 
@@ -111,34 +112,13 @@
             height: 100%;
             display: flex;
             align-items: flex-start;
-            /* 預設完全隱藏 */
-            opacity: 0;
-            /* 預設位移 80px */
-            transform: translate3d(0, 80px, 0);
+            opacity: 0; /* 預設完全隱藏，由 JS 物理滾動控制 */
             pointer-events: none;
-            /* 配合時間差，將漸顯過渡調至更流暢緊湊的 0.8s */
-            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            /* 移除 transition 改為 JS 純物理滾動數值控制，不拖泥帶水 */
+            transition: none; 
             will-change: opacity, transform;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-        }
-
-        /* 💡 針對圖片 1、4 微調：縮短漸顯時的初始位移距離（從 80px 縮小至 30px） */
-        .step1-item.style-1, .step1-item.style-4 {
-            transform: translate3d(0, 30px, 0);
-        }
-
-        /* 啟動時顯示，並流暢往上滑動回到原位 */
-        .step1-item.active {
-            opacity: 1;
-            transform: translate3d(0, 0, 0) !important; /* 強制覆蓋縮短後的位移 */
-            pointer-events: auto;
-        }
-
-        /* 💡 【過渡圖 7】特殊設定：取消它的 CSS transition 控制，改用 JS 滾動數值直接硬綁定，實現純物理滑動控制 */
-        .step1-item.step-group-transit {
-            transition: none; 
-            transform: translate3d(0, 0, 0); /* 保持在原位，單純做透明度物理漸變 */
         }
 
         .img-wrapper {
@@ -157,54 +137,54 @@
     <div class="step1-scroll-container">
         <div class="step1-sticky-frame">
 
-            <!-- 【階段一：第一次滑動顯現】 -->
-            <!-- 1. 工作區域 3 出現順序：第一階段（最先，延遲 0s） 疊加順序：最上層 (z-index: 10) -->
-            <div class="step1-item step-group-1" style="z-index: 10;">
+            <!-- 【階段一：第一次物理顯現】 -->
+            <!-- 1. 工作區域 3 疊加順序：最上層 (z-index: 10) -->
+            <div class="step1-item step-3" style="z-index: 10;">
                 <div class="img-wrapper">
                     <img src="工作區域 3.png">
                 </div>
             </div>
 
-            <!-- 2. 工作區域 2 出現順序：第一階段（延遲由 0.02s 延長至 0.12s，拉大顯現間隔） 疊加順序：最底層 (z-index: 5) -->
-            <div class="step1-item step-group-1" style="transition-delay: 0.12s; z-index: 5;">
+            <!-- 2. 工作區域 2 疊加順序：最底層 (z-index: 5) -->
+            <div class="step1-item step-2" style="z-index: 5;">
                 <div class="img-wrapper">
                     <img src="工作區域 2.png">
                 </div>
             </div>
 
-            <!-- 【階段二：下一次滑動顯現（5、6 先出）】 -->
-            <!-- 3. 工作區域 5 出現順序：第二階段（最先，延遲 0s） 疊加順序：第二層 (z-index: 9) -->
-            <div class="step1-item step-group-2-A" style="z-index: 9;">
+            <!-- 【階段二：下一次物理顯現（5、6 先出）】 -->
+            <!-- 3. 工作區域 5 疊加順序：第二層 (z-index: 9) -->
+            <div class="step1-item step-5" style="z-index: 9;">
                 <div class="img-wrapper">
                     <img src="工作區域 5.png">
                 </div>
             </div>
 
-            <!-- 4. 工作區域 6 出現順序：第二階段（延遲 0.08s） 疊加順序：第三層 (z-index: 8) -->
-            <div class="step1-item step-group-2-A" style="transition-delay: 0.08s; z-index: 8;">
+            <!-- 4. 工作區域 6 疊加順序：第三層 (z-index: 8) -->
+            <div class="step1-item step-6" style="z-index: 8;">
                 <div class="img-wrapper">
                     <img src="工作區域 6.png">
                 </div>
             </div>
 
-            <!-- 【階段三：最後顯現（1、4 後出，且位移縮短）】 -->
-            <!-- 5. 工作區域 1 出現順序：第三階段（延遲 0.01s，帶有 style-1 微調類別） 疊加順序：第四層 (z-index: 7) -->
-            <div class="step1-item style-1 step-group-2-B" style="transition-delay: 0.01s; z-index: 7;">
+            <!-- 【階段三：最後物理顯現（1、4 後出，且位移縮短）】 -->
+            <!-- 5. 工作區域 1 疊加順序：第四層 (z-index: 7) -->
+            <div class="step1-item step-1" style="z-index: 7;">
                 <div class="img-wrapper">
                     <img src="工作區域 1.png">
                 </div>
             </div>
 
-            <!-- 6. 工作區域 4 出現順序：第三階段（延遲 0.07s，帶有 style-4 微調類別） 疊加順序：第五層 (z-index: 6) -->
-            <div class="step1-item style-4 step-group-2-B" style="transition-delay: 0.07s; z-index: 6;">
+            <!-- 6. 工作區域 4 疊加順序：第五層 (z-index: 6) -->
+            <div class="step1-item step-4" style="z-index: 6;">
                 <div class="img-wrapper">
                     <img src="工作區域 4.png">
                 </div>
             </div>
 
             <!-- 【階段四：過渡圖疊加在最上方，覆蓋步驟一所有圖】 -->
-            <!-- 7. 工作區域 7 出現順序：第四階段（最遲出現，作為畫面過渡） 疊加順序：最上層覆蓋 (z-index: 12) -->
-            <div class="step1-item step-group-transit" style="z-index: 12;">
+            <!-- 7. 工作區域 7 疊加順序：最上層覆蓋 (z-index: 12) -->
+            <div class="step1-item step-7" style="z-index: 12;">
                 <div class="img-wrapper">
                     <img src="工作區域 7.png">
                 </div>
@@ -245,88 +225,122 @@
 
     <!-- 滾動偵測 JavaScript -->
     <script>
+        // 輔助函式：計算特定區間內的物理進度與對應變數
+        function getInterpolatedValue(progress, start, end, fromVal, toVal) {
+            if (progress < start) return fromVal;
+            if (progress > end) return toVal;
+            const ratio = (progress - start) / (end - start);
+            return fromVal + (toVal - fromVal) * ratio;
+        }
+
         function handleScroll() {
             const container = document.querySelector('.step1-scroll-container');
             const stickyFrame = document.querySelector('.step1-sticky-frame');
-            const group1 = document.querySelectorAll('.step-group-1');
-            const group2A = document.querySelectorAll('.step-group-2-A');
-            const group2B = document.querySelectorAll('.step-group-2-B');
-            const transitItem = document.querySelector('.step-group-transit');
+            const title = document.querySelector('.title-container');
+            
+            // 各個圖片元素
+            const img3 = document.querySelector('.step-3');
+            const img2 = document.querySelector('.step-2');
+            const img5 = document.querySelector('.step-5');
+            const img6 = document.querySelector('.step-6');
+            const img1 = document.querySelector('.step-1');
+            const img4 = document.querySelector('.step-4');
+            const img7 = document.querySelector('.step-7');
 
             if (!container || !stickyFrame) return;
 
-            // 取得步驟一容器相對於視窗的座標
+            // 取得滾動區間進度
             const rect = container.getBoundingClientRect();
-            // 可滾動總高度
             const scrollableHeight = rect.height - window.innerHeight;
-            // 計算進度 (0 ~ 1)
             let progress = -rect.top / scrollableHeight;
             progress = Math.max(0, Math.min(1, progress));
 
             // =======================================================
-            // 💡 滾動進度分配：
-            // - 第一階段 (進度 >= 20%)：觸發 2、3
-            // - 第二階段 (進度 >= 40%)：觸發 5、6
-            // - 第三階段 (進度 >= 60%)：觸發 1、4
+            // 1. 標題 (title) 物理滾動控制 (0% -> 20%)
+            // - 滾動 0% ~ 20% 時，標題平滑上移 0px -> -80px 並淡出 (Opacity: 1 -> 0)
             // =======================================================
-
-            // 第一組判定 (工作區域 2, 3)
-            if (progress >= 0.20) {
-                group1.forEach(step => step.classList.add('active'));
-            } else {
-                group1.forEach(step => step.classList.remove('active'));
-            }
-
-            // 第二組 A 判定 (工作區域 5, 6)
-            if (progress >= 0.40) {
-                group2A.forEach(step => step.classList.add('active'));
-            } else {
-                group2A.forEach(step => step.classList.remove('active'));
-            }
-
-            // 第二組 B 判定 (工作區域 1, 4)
-            if (progress >= 0.60) {
-                group2B.forEach(step => step.classList.add('active'));
-            } else {
-                group2B.forEach(step => step.classList.remove('active'));
+            const titleOpacity = getInterpolatedValue(progress, 0.0, 0.20, 1, 0);
+            const titleTranslateY = getInterpolatedValue(progress, 0.0, 0.20, 0, -80);
+            if (title) {
+                title.style.opacity = titleOpacity;
+                title.style.transform = `translate3d(0, ${titleTranslateY}px, 0)`;
+                title.style.display = titleOpacity === 0 ? 'none' : 'flex';
             }
 
             // =======================================================
-            // 💡 【核心優化】過渡圖 7 物理滑動漸顯 + 步驟一同步上滑移出
-            // - 漸顯區間定在進度 75% 到 95% 之間
+            // 2. 階段一：工作區域 3 & 工作區域 2 (15% -> 45%)
+            // - 3.png：淡入 (0->1)，往上平移 (80px -> 0px)
+            // - 2.png：物理延後出現（在 20% -> 45% 區間），淡入，平移 (80px -> 0px)
             // =======================================================
-            const startProgress = 0.75;
-            const endProgress = 0.95;
-
-            if (progress >= startProgress) {
-                // 1. 計算過渡圖 7 的透明度 (依據滑動距離從 0 線性增加到 1)
-                let opacityVal = (progress - startProgress) / (endProgress - startProgress);
-                opacityVal = Math.max(0, Math.min(1, opacityVal)); // 限制在 0 ~ 1
-
-                if (transitItem) {
-                    transitItem.style.opacity = opacityVal;
-                    // 當有透明度時開啟 pointer-events 確保其可被點擊（若有需要）
-                    transitItem.style.pointerEvents = opacityVal > 0.1 ? 'auto' : 'none';
-                }
-
-                // 2. 步驟一同步往上平移移出畫面 (進度從 75% 到 100% 時，平移 0px 到 -100px)
-                let translatePercent = ((progress - startProgress) / (1 - startProgress)) * -100;
-                translatePercent = Math.max(-100, Math.min(0, translatePercent)); // 限制在 0% ~ -100%
-                stickyFrame.style.transform = `translate3d(0, ${translatePercent}vh, 0)`;
-
-            } else {
-                // 還沒滑到過渡階段時，維持初始狀態
-                if (transitItem) {
-                    transitItem.style.opacity = '0';
-                    transitItem.style.pointerEvents = 'none';
-                }
-                stickyFrame.style.transform = 'translate3d(0, 0, 0)';
+            const img3Opacity = getInterpolatedValue(progress, 0.15, 0.35, 0, 1);
+            const img3Y = getInterpolatedValue(progress, 0.15, 0.35, 80, 0);
+            if (img3) {
+                img3.style.opacity = img3Opacity;
+                img3.style.transform = `translate3d(0, ${img3Y}px, 0)`;
             }
+
+            const img2Opacity = getInterpolatedValue(progress, 0.20, 0.45, 0, 1);
+            const img2Y = getInterpolatedValue(progress, 0.20, 0.45, 80, 0);
+            if (img2) {
+                img2.style.opacity = img2Opacity;
+                img2.style.transform = `translate3d(0, ${img2Y}px, 0)`;
+            }
+
+            // =======================================================
+            // 3. 階段二：工作區域 5 & 工作區域 6 (35% -> 65%)
+            // - 5.png：淡入 (0->1)，往上平移 (80px -> 0px)
+            // - 6.png：物理延後出現（在 40% -> 65% 區間），淡入，平移 (80px -> 0px)
+            // =======================================================
+            const img5Opacity = getInterpolatedValue(progress, 0.35, 0.55, 0, 1);
+            const img5Y = getInterpolatedValue(progress, 0.35, 0.55, 80, 0);
+            if (img5) {
+                img5.style.opacity = img5Opacity;
+                img5.style.transform = `translate3d(0, ${img5Y}px, 0)`;
+            }
+
+            const img6Opacity = getInterpolatedValue(progress, 0.40, 0.65, 0, 1);
+            const img6Y = getInterpolatedValue(progress, 0.40, 0.65, 80, 0);
+            if (img6) {
+                img6.style.opacity = img6Opacity;
+                img6.style.transform = `translate3d(0, ${img6Y}px, 0)`;
+            }
+
+            // =======================================================
+            // 4. 階段三：工作區域 1 & 工作區域 4 (55% -> 85%)
+            // - 兩者位移量皆為較短的 30px。
+            // - 1.png：淡入，平移 (30px -> 0px)
+            // - 4.png：物理稍微延後出現（在 60% -> 85% 區間），淡入，平移 (30px -> 0px)
+            // =======================================================
+            const img1Opacity = getInterpolatedValue(progress, 0.55, 0.75, 0, 1);
+            const img1Y = getInterpolatedValue(progress, 0.55, 0.75, 30, 0);
+            if (img1) {
+                img1.style.opacity = img1Opacity;
+                img1.style.transform = `translate3d(0, ${img1Y}px, 0)`;
+            }
+
+            const img4Opacity = getInterpolatedValue(progress, 0.60, 0.85, 0, 1);
+            const img4Y = getInterpolatedValue(progress, 0.60, 0.85, 30, 0);
+            if (img4) {
+                img4.style.opacity = img4Opacity;
+                img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
+            }
+
+            // =======================================================
+            // 5. 過渡圖 7 物理淡入 & 步驟一粘性框上滑移出 (75% -> 100%)
+            // - 過渡圖 7：在滾動 75% -> 95% 時，透明度依物理距離漸顯 (0 -> 1)
+            // - 粘性框架：在滾動 75% -> 100% 時，整體平滑上推 0vh -> -100vh
+            // =======================================================
+            const img7Opacity = getInterpolatedValue(progress, 0.75, 0.95, 0, 1);
+            if (img7) {
+                img7.style.opacity = img7Opacity;
+            }
+
+            const frameTranslateY = getInterpolatedValue(progress, 0.75, 1.00, 0, -100);
+            stickyFrame.style.transform = `translate3d(0, ${frameTranslateY}vh, 0)`;
         }
 
-        // 綁定滾動事件
+        // 綁定滾動與載入事件
         window.addEventListener('scroll', handleScroll);
-        // 頁面載入時先執行一次，確保初始狀態正確
         window.addEventListener('DOMContentLoaded', handleScroll);
     </script>
 </body>
