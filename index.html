@@ -84,7 +84,7 @@
         /* 步驟一專屬滾動容器 */
         .step1-scroll-container {
             position: relative;
-            height: 450vh; /* 增加總高度，容納第四個階段的過渡圖疊加 */
+            height: 450vh; 
             width: 100%;
             margin-top: -100vh; /* 與標題重合定位，達到無縫滾動效果 */
         }
@@ -108,20 +108,25 @@
             display: flex;
             align-items: flex-start;
             
-            /* 預設完全隱藏，並向下大幅度位移 100px */
+            /* 預設完全隱藏 */
             opacity: 0;
-            transform: translateY(100px); 
+            /* 💡 優化 1：改用 translate3d 啟用 GPU 顯示卡加速，防止手機端滾動手感抖動 */
+            transform: translate3d(0, 80px, 0); 
             pointer-events: none;
             
-            /* 過渡時間 1.2s，慢速升起與漸顯 */
-            transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            /* 💡 優化 2：改用更溫和、符合物理感官的緩動曲線 (quintic out 曲線) */
+            transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            
+            /* 💡 優化 3：告知瀏覽器為這些屬性預留硬體資源 */
             will-change: opacity, transform;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         /* 啟動時顯示，並流暢往上滑動回到原位 */
         .step1-item.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: translate3d(0, 0, 0);
             pointer-events: auto;
         }
 
@@ -204,7 +209,7 @@
             <!-- 【階段四：過渡圖疊加在最上方，覆蓋步驟一所有圖】 -->
             <!-- 7. 工作區域 7 
                  出現順序：第四階段（最遲出現，作為畫面過渡）
-                 疊加順序：最上層覆蓋 (z-index: 12，數值必須大於其他圖片的 z-index) -->
+                 疊加順序：最上層覆蓋 (z-index: 12) -->
             <div class="step1-item step-group-transit" style="z-index: 12;">
                 <div class="img-wrapper">
                     <img src="工作區域 7.png">
@@ -268,14 +273,6 @@
             let progress = -rect.top / scrollableHeight;
             progress = Math.max(0, Math.min(1, progress)); 
 
-            // =======================================================
-            // 💡 滾動進度分配（新增第四階段，讓 7 完美疊加在最上方）：
-            // - 第一階段 (進度 >= 20%)：觸發 2、3
-            // - 第二階段 (進度 >= 40%)：觸發 5、6
-            // - 第三階段 (進度 >= 60%)：觸發 1、4
-            // - 第四階段 (進度 >= 80%)：觸發 7（過渡圖疊在最上層覆蓋）
-            // =======================================================
-            
             // 第一組判定 (工作區域 2, 3)
             if (progress >= 0.20) {
                 group1.forEach(step => step.classList.add('active'));
