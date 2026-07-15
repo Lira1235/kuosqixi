@@ -57,6 +57,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            z-index: 10;
         }
 
         /* 段落文字樣式 */
@@ -83,7 +85,7 @@
         /* 步驟一專屬滾動容器 */
         .step1-scroll-container {
             position: relative;
-            height: 450vh;
+            height: 480vh; /* 微增高度，讓物理滑動行程更平穩 */
             width: 100%;
             margin-top: -100vh; /* 與標題重合定位，達到無縫滾動效果 */
         }
@@ -95,6 +97,9 @@
             height: 100vh;
             height: 100dvh;
             width: 100%;
+            /* 新增 transition 讓步驟一整體上移時保持平滑 */
+            transition: transform 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+            will-change: transform;
         }
 
         /* 步驟一內的每一張圖片容器 */
@@ -128,6 +133,12 @@
             opacity: 1;
             transform: translate3d(0, 0, 0) !important; /* 強制覆蓋縮短後的位移 */
             pointer-events: auto;
+        }
+
+        /* 💡 【過渡圖 7】特殊設定：取消它的 CSS transition 控制，改用 JS 滾動數值直接硬綁定，實現純物理滑動控制 */
+        .step1-item.step-group-transit {
+            transition: none; 
+            transform: translate3d(0, 0, 0); /* 保持在原位，單純做透明度物理漸變 */
         }
 
         .img-wrapper {
@@ -236,12 +247,13 @@
     <script>
         function handleScroll() {
             const container = document.querySelector('.step1-scroll-container');
+            const stickyFrame = document.querySelector('.step1-sticky-frame');
             const group1 = document.querySelectorAll('.step-group-1');
             const group2A = document.querySelectorAll('.step-group-2-A');
             const group2B = document.querySelectorAll('.step-group-2-B');
-            const groupTransit = document.querySelectorAll('.step-group-transit');
+            const transitItem = document.querySelector('.step-group-transit');
 
-            if (!container) return;
+            if (!container || !stickyFrame) return;
 
             // 取得步驟一容器相對於視窗的座標
             const rect = container.getBoundingClientRect();
@@ -253,14 +265,13 @@
 
             // =======================================================
             // 💡 滾動進度分配：
-            // - 第一階段 (進度 >= 22%)：觸發 2、3
+            // - 第一階段 (進度 >= 20%)：觸發 2、3
             // - 第二階段 (進度 >= 40%)：觸發 5、6
             // - 第三階段 (進度 >= 60%)：觸發 1、4
-            // - 第四階段 (進度 >= 80%)：觸發 7
             // =======================================================
 
             // 第一組判定 (工作區域 2, 3)
-            if (progress >= 0.22) {
+            if (progress >= 0.20) {
                 group1.forEach(step => step.classList.add('active'));
             } else {
                 group1.forEach(step => step.classList.remove('active'));
@@ -280,11 +291,36 @@
                 group2B.forEach(step => step.classList.remove('active'));
             }
 
-            // 過渡圖 7 判定
-            if (progress >= 0.80) {
-                groupTransit.forEach(step => step.classList.add('active'));
+            // =======================================================
+            // 💡 【核心優化】過渡圖 7 物理滑動漸顯 + 步驟一同步上滑移出
+            // - 漸顯區間定在進度 75% 到 95% 之間
+            // =======================================================
+            const startProgress = 0.75;
+            const endProgress = 0.95;
+
+            if (progress >= startProgress) {
+                // 1. 計算過渡圖 7 的透明度 (依據滑動距離從 0 線性增加到 1)
+                let opacityVal = (progress - startProgress) / (endProgress - startProgress);
+                opacityVal = Math.max(0, Math.min(1, opacityVal)); // 限制在 0 ~ 1
+
+                if (transitItem) {
+                    transitItem.style.opacity = opacityVal;
+                    // 當有透明度時開啟 pointer-events 確保其可被點擊（若有需要）
+                    transitItem.style.pointerEvents = opacityVal > 0.1 ? 'auto' : 'none';
+                }
+
+                // 2. 步驟一同步往上平移移出畫面 (進度從 75% 到 100% 時，平移 0px 到 -100px)
+                let translatePercent = ((progress - startProgress) / (1 - startProgress)) * -100;
+                translatePercent = Math.max(-100, Math.min(0, translatePercent)); // 限制在 0% ~ -100%
+                stickyFrame.style.transform = `translate3d(0, ${translatePercent}vh, 0)`;
+
             } else {
-                groupTransit.forEach(step => step.classList.remove('active'));
+                // 還沒滑到過渡階段時，維持初始狀態
+                if (transitItem) {
+                    transitItem.style.opacity = '0';
+                    transitItem.style.pointerEvents = 'none';
+                }
+                stickyFrame.style.transform = 'translate3d(0, 0, 0)';
             }
         }
 
