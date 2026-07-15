@@ -132,7 +132,7 @@
             display: flex;
             align-items: flex-start; /* 對齊頂部 */
             opacity: 0; 
-            transform: translate3d(0, 40px, 0); /* 初始滑動距離縮短，上滑幅度更平緩 */
+            transform: translate3d(0, 40px, 0); /* 初始滑動距離 */
             pointer-events: none;
             transition: none; 
             will-change: transform, opacity;
@@ -140,10 +140,11 @@
             -webkit-backface-visibility: hidden;
         }
 
-        /* 專門讓過渡圖 7 能夠從下方滑上來，產生與步驟一底部的交疊感 */
+        /* 專門讓過渡圖 7 初始置於視窗最下方，與步驟一產生交疊並方便由下往上滑入 */
         .step-item.step-7-container {
-            align-items: flex-end; /* 對齊底部，使圖片緊貼視窗最下方 */
-            transform: translate3d(0, 100vh, 0); /* 初始置於視窗最下方（100vh） */
+            align-items: flex-end; /* 對齊底部 */
+            transform: translate3d(0, 100vh, 0); 
+            will-change: transform, opacity;
         }
 
         .img-wrapper {
@@ -163,7 +164,7 @@
 
         <div class="step-sticky-frame step1-sticky-frame">
 
-            <!-- 步驟一 1~7 圖片群組 (集體往上滑移) -->
+            <!-- 步驟一 1~6 圖片群組 (集體往上滑移，以帶出下方的過渡圖 7) -->
             <div class="step-images-group step1-images-group">
 
                 <!-- 【階段一：第一次物理顯現】 -->
@@ -211,14 +212,14 @@
                     </div>
                 </div>
 
-                <!-- 【階段四：過渡圖 7 放入群組，設定為特別容器，使其能夠從視窗下方產生交疊並由下往上推入】 -->
-                <!-- 7. 工作區域 7 (z-index 設為 2，層級在步驟一 1~6 之下) -->
-                <div class="step-item step-7-container step-7" style="z-index: 2;">
-                    <div class="img-wrapper">
-                        <img src="工作區域 7.png" decoding="async">
-                    </div>
-                </div>
+            </div>
 
+            <!-- 【階段四：過渡圖 7 獨立放置於 step-sticky-frame 中，不被步驟一的 images-group 包裹】 -->
+            <!-- 這樣當步驟一群組上移時，過渡圖 7 就能完美在下方被帶出並產生交疊 -->
+            <div class="step-item step-7-container step-7" style="z-index: 2;">
+                <div class="img-wrapper">
+                    <img src="工作區域 7.png" decoding="async">
+                </div>
             </div>
 
         </div>
@@ -378,19 +379,30 @@
                     img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
                 }
 
-                // 階段四：過渡圖 7 出現（從 100vh 視窗底部由下往上滑移推入）
-                // 隨著滾動，其 Y 軸偏移從 100vh 縮小至 0，使其緊貼並自然交疊在步驟一最下方
-                const img7Opacity = getInterpolatedValue(progress1, 0.55, 0.75, 0, 1);
-                const img7Y = getInterpolatedValue(progress1, 0.55, 0.78, window.innerHeight, 0);
-                if (img7) {
-                    img7.style.opacity = img7Opacity;
-                    img7.style.transform = `translate3d(0, ${img7Y}px, 0)`;
-                }
-
-                // 階段五：待 1~7 顯示完畢後，整個群組（包含最底層交疊好的過渡圖 7）一起往上滑移移出
-                const groupTranslateY = getInterpolatedValue(progress1, 0.82, 1.00, 0, -100);
+                // 階段四：步驟一（1~6）上移，同時帶出下方的過渡圖 7
+                // 當 progress 達 0.55 時，步驟一圖片群組 imagesGroup1 開始流暢往上滑移
+                const groupTranslateY = getInterpolatedValue(progress1, 0.55, 0.82, 0, -100);
                 if (imagesGroup1) {
                     imagesGroup1.style.transform = `translate3d(0, ${groupTranslateY}vh, 0)`;
+                }
+
+                // 過渡圖 7 初始藏在最下方（100vh），隨著步驟一往上移，它同步滑入並漸顯
+                // 這裡的滑動進度與 imagesGroup1 高度同步，產生完美的交疊拉出感
+                const img7Opacity = getInterpolatedValue(progress1, 0.55, 0.78, 0, 1);
+                let img7Y = getInterpolatedValue(progress1, 0.55, 0.82, window.innerHeight, 0);
+
+                // 階段五：當滾動快要結束時（> 0.85），過渡圖 7 繼續往上滑動移出視窗，為步驟二做準備
+                if (progress1 >= 0.85) {
+                    const finalY = getInterpolatedValue(progress1, 0.85, 1.00, 0, -100);
+                    if (img7) {
+                        img7.style.opacity = getInterpolatedValue(progress1, 0.85, 1.00, 1, 0); // 微幅漸隱
+                        img7.style.transform = `translate3d(0, ${finalY}vh, 0)`;
+                    }
+                } else {
+                    if (img7) {
+                        img7.style.opacity = img7Opacity;
+                        img7.style.transform = `translate3d(0, ${img7Y}px, 0)`;
+                    }
                 }
 
                 stickyFrame1.style.transform = 'translate3d(0, 0, 0)';
@@ -417,7 +429,7 @@
                 let progress2 = -rect2.top / scrollableHeight2;
                 progress2 = Math.max(0, Math.min(1, progress2));
 
-                // 1. 出現 13 (滾動進度：0.05 -> 0.15，滑動起步縮短至 40px)
+                // 1. 出現 13 (滑動起步 40px)
                 const img13Opacity = getInterpolatedValue(progress2, 0.05, 0.15, 0, 1);
                 const img13Y = getInterpolatedValue(progress2, 0.05, 0.15, 40, 0);
                 if (img13) {
@@ -425,7 +437,7 @@
                     img13.style.transform = `translate3d(0, ${img13Y}px, 0)`;
                 }
 
-                // 2. 出現 12 (滾動進度：0.09 -> 0.19，與 13 出現間隔 0.04，滑動起步縮短至 40px)
+                // 2. 出現 12 (與 13 出現間隔 0.04)
                 const img12Opacity = getInterpolatedValue(progress2, 0.09, 0.19, 0, 1);
                 const img12Y = getInterpolatedValue(progress2, 0.09, 0.19, 40, 0);
                 if (img12) {
@@ -433,7 +445,7 @@
                     img12.style.transform = `translate3d(0, ${img12Y}px, 0)`;
                 }
 
-                // 3. 出現 10 (滾動進度：0.22 -> 0.32，滑動起步縮短至 40px)
+                // 3. 出現 10
                 const img10Opacity = getInterpolatedValue(progress2, 0.22, 0.32, 0, 1);
                 const img10Y = getInterpolatedValue(progress2, 0.22, 0.32, 40, 0);
                 if (img10) {
@@ -441,7 +453,7 @@
                     img10.style.transform = `translate3d(0, ${img10Y}px, 0)`;
                 }
 
-                // 4. 出現 14 (滾動進度：0.25 -> 0.35，與 10 出現間隔 0.03，滑動起步縮短至 40px)
+                // 4. 出現 14
                 const img14Opacity = getInterpolatedValue(progress2, 0.25, 0.35, 0, 1);
                 const img14Y = getInterpolatedValue(progress2, 0.25, 0.35, 40, 0);
                 if (img14) {
@@ -455,7 +467,7 @@
                     imagesGroup2.style.transform = `translate3d(0, ${groupTranslateY2}vh, 0)`;
                 }
 
-                // 6. 9 與 11 同步緩緩上移進入中央漸顯 (初始位移設定為極輕微的 20px)
+                // 6. 9 與 11 同步緩緩上移進入中央漸顯 (初始微幅偏移 20px)
                 let img9_11Y = getInterpolatedValue(progress2, 0.48, 0.72, 20, 0);
                 const img9_11Opacity = getInterpolatedValue(progress2, 0.48, 0.67, 0, 1);
 
