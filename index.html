@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>七夕收涎儀式流程</title>
     <style>
+        /* 移除 body 的 padding 內距，確保圖片能實現 100% 左右滿版 */
         body {
             background-image: url('web工作區域 1.png');
             background-size: 100% auto;
@@ -14,20 +15,21 @@
             min-height: 100vh;
             background-color: #a24731;
             margin: 0;
-            padding: 10px; /* 手機版稍微縮小內距，讓畫面更滿 */
+            padding: 0; /* 設為 0 確保左右貼合螢幕 */
             font-family: sans-serif;
+            overflow-x: hidden; /* 預防手機版出現水平滾動條 */
         }
 
-        /* 標題樣式：強制顯示在同一列，並針對手機寬度自動縮小字體 */
+        /* 標題樣式：強制顯示在同一列 */
         h1 {
             text-align: center;
             color: #e99e9d;
-            font-size: 8vw; /* 使用 vw 單位讓字型隨螢幕寬度自動縮放 */
-            max-size: 60px; /* 電腦版最大限制為 60px */
+            font-size: 8vw; /* 使用 vw 讓字型隨螢幕寬度縮放 */
             margin-top: 30px;
             margin-bottom: 20px;
             white-space: nowrap; /* 強制不換行，顯示於同一列 */
-            letter-spacing: 2px; /* 稍微縮小字距確保塞得下 */
+            letter-spacing: 2px;
+            padding: 0 10px;
         }
 
         /* 電腦版時固定 H1 最大大小 */
@@ -44,16 +46,17 @@
             line-height: 1.5;
             color: #ffffff;
             margin-bottom: 10px;
-            padding: 0 10px;
+            padding: 0 15px; /* 保留文字與螢幕邊緣的舒適距離 */
         }
 
-        /* 圖片基本設定（無圓角、無陰影、完全符合手機寬度） */
+        /* 圖片設定：移除圓角、陰影，100% 完整貼合螢幕寬度 */
         img {
             border-radius: 0px; 
-            margin-top: 10px;
+            margin: 0;
             width: 100% !important; 
             height: auto;
-            box-shadow: none; /* 已移除陰影 */
+            display: block; /* 消除圖片底部預設的微小間隙 */
+            box-shadow: none; 
         }
 
         /* ==========================================
@@ -63,17 +66,17 @@
         /* 滾動大容器 */
         .scroll-container {
             position: relative;
-            height: 600vh; 
-            margin-top: 30px;
+            height: 650vh; /* 提供足夠的滾動長度，讓每個步驟有充足的顯現時間 */
+            margin-top: 20px;
         }
 
-        /* 粘性定位框架：移除最大寬度限制，在手機上完全滿版 */
+        /* 粘性定位框架：完全滿版 */
         .sticky-frame {
             position: sticky;
-            top: 5%;
-            height: 90vh;
+            top: 0;
+            height: 100vh;
             width: 100%;
-            margin: 0 auto;
+            margin: 0;
         }
 
         /* 每個步驟的基礎設定 */
@@ -88,20 +91,18 @@
             justify-content: flex-start;
             align-items: center;
             
-            /* 預設完全透明，並往下方稍微位移 */
+            /* 預設完全透明 */
             opacity: 0;
-            transform: translateY(40px);
             pointer-events: none;
             
             /* 滑動時的平滑轉場 */
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-            will-change: opacity, transform;
+            transition: opacity 0.6s ease-out;
+            will-change: opacity;
         }
 
         /* 當符合滾動區間時，套用 active 漸顯 */
         .step-item.active {
             opacity: 1;
-            transform: translateY(0);
             pointer-events: auto;
         }
 
@@ -125,49 +126,49 @@
             
             <!-- 步驟 1 (多張圖片依序漸顯疊加，不顯示文字) -->
             <!-- 1. 工作區域 3 (最先出現) -->
-            <div class="step-item">
+            <div class="step-item" style="z-index: 1;">
                 <div class="img-wrapper">
                     <img src="工作區域 3.png">
                 </div>
             </div>
 
-            <!-- 2. 工作區域 2 (與工作區域 3 相差 0.02 秒出現) -->
-            <div class="step-item" style="transition-delay: 0.02s;">
+            <!-- 2. 工作區域 2 -->
+            <div class="step-item" style="transition-delay: 0.02s; z-index: 2;">
                 <div class="img-wrapper">
                     <img src="工作區域 2.png">
                 </div>
             </div>
 
-            <!-- 3. 工作區域 5 (接續出現，設定 0.04 秒延遲) -->
-            <div class="step-item" style="transition-delay: 0.04s;">
+            <!-- 3. 工作區域 5 -->
+            <div class="step-item" style="transition-delay: 0.04s; z-index: 3;">
                 <div class="img-wrapper">
                     <img src="工作區域 5.png">
                 </div>
             </div>
 
-            <!-- 4. 工作區域 6 (相繼緊隨出現，設定 0.05 秒延遲) -->
-            <div class="step-item" style="transition-delay: 0.05s;">
+            <!-- 4. 工作區域 6 -->
+            <div class="step-item" style="transition-delay: 0.05s; z-index: 4;">
                 <div class="img-wrapper">
                     <img src="工作區域 6.png">
                 </div>
             </div>
 
-            <!-- 5. 工作區域 1 (於 5 出現後 0.02 秒出現，即 0.06s 延遲) -->
-            <div class="step-item" style="transition-delay: 0.06s;">
+            <!-- 5. 工作區域 1 -->
+            <div class="step-item" style="transition-delay: 0.06s; z-index: 5;">
                 <div class="img-wrapper">
                     <img src="工作區域 1.png">
                 </div>
             </div>
 
-            <!-- 6. 工作區域 4 (緊接在後，設定 0.07 秒延遲) -->
-            <div class="step-item" style="transition-delay: 0.07s;">
+            <!-- 6. 工作區域 4 (步驟一的最後一張圖，疊在最上層) -->
+            <div class="step-item" style="transition-delay: 0.07s; z-index: 6;">
                 <div class="img-wrapper">
                     <img src="工作區域 4.png">
                 </div>
             </div>
 
-            <!-- 步驟 2 -->
-            <div class="step-item">
+            <!-- 步驟 2 (疊在步驟一最上層圖片之上) -->
+            <div class="step-item" style="z-index: 7;">
                 <p>2.讓小孩的雙腳跨在戶碇兩旁。</p>
                 <div class="img-wrapper">
                     <img src="web3.png">
@@ -175,7 +176,7 @@
             </div>
 
             <!-- 步驟 3 -->
-            <div class="step-item">
+            <div class="step-item" style="z-index: 8;">
                 <p>3.用七夕粿擦嘴。</p>
                 <div class="img-wrapper">
                     <img src="web4.png">
@@ -183,7 +184,7 @@
             </div>
 
             <!-- 步驟 4 -->
-            <div class="step-item">
+            <div class="step-item" style="z-index: 9;">
                 <p>4.讓小孩咬一小口七夕粿吐在地上，家長唸：「丟一口粿，死後入土，乎六畜吞入肚，保我兒孫無事故。」</p>
                 <div class="img-wrapper">
                     <img src="web5.png">
@@ -191,7 +192,7 @@
             </div>
 
             <!-- 步驟 5 -->
-            <div class="step-item">
+            <div class="step-item" style="z-index: 10;">
                 <p>5.祭拜完後焚燒金紙，將胭脂置於屋頂或牆角，給織女打扮使用</p>
                 <div class="img-wrapper">
                     <img src="web5.png">
@@ -199,7 +200,7 @@
             </div>
 
             <!-- 結尾大圖 -->
-            <div class="step-item">
+            <div class="step-item" style="z-index: 11;">
                 <div class="img-wrapper">
                     <img src="webb.png">
                 </div>
@@ -229,6 +230,7 @@
             const stepCount = steps.length;
 
             // 分配每個步驟的臨界值
+            // 當滾動超過臨界值，對應的 step-item 才會出現並疊加上去
             steps.forEach((step, index) => {
                 const threshold = index / stepCount;
 
