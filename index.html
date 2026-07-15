@@ -57,12 +57,6 @@
             align-items: center;
         }
 
-        /* 過渡圖片專用設定 (步驟一到步驟二中間) */
-        .transition-section {
-            width: 100%;
-            margin-bottom: 40px; /* 與下方步驟二的文字保持適當間距 */
-        }
-
         /* 段落文字樣式 */
         p {
             text-align: left;
@@ -90,7 +84,7 @@
         /* 步驟一專屬滾動容器 */
         .step1-scroll-container {
             position: relative;
-            height: 400vh; /* 稍微拉長總高度，讓多段滑動手感更細緻 */
+            height: 450vh; /* 增加總高度，容納第四個階段的過渡圖疊加 */
             width: 100%;
             margin-top: -100vh; /* 與標題重合定位，達到無縫滾動效果 */
         }
@@ -206,14 +200,18 @@
                 </div>
             </div>
 
+
+            <!-- 【階段四：過渡圖疊加在最上方，覆蓋步驟一所有圖】 -->
+            <!-- 7. 工作區域 7 
+                 出現順序：第四階段（最遲出現，作為畫面過渡）
+                 疊加順序：最上層覆蓋 (z-index: 12，數值必須大於其他圖片的 z-index) -->
+            <div class="step1-item step-group-transit" style="z-index: 12;">
+                <div class="img-wrapper">
+                    <img src="工作區域 7.png">
+                </div>
+            </div>
+
         </div>
-    </div>
-
-
-    <!-- ─── 步驟一與步驟二中間的『轉場過渡圖片』 ─── -->
-    <!-- 當步驟一的 6 張圖在上方 sticky 固定完畢，頁面繼續往下滑，此圖會作為開端被推上來 -->
-    <div class="transition-section">
-        <img src="工作區域 7.png">
     </div>
 
 
@@ -256,6 +254,7 @@
             const group1 = document.querySelectorAll('.step-group-1');
             const group2A = document.querySelectorAll('.step-group-2-A');
             const group2B = document.querySelectorAll('.step-group-2-B');
+            const groupTransit = document.querySelectorAll('.step-group-transit');
             
             if (!container) return;
 
@@ -270,31 +269,39 @@
             progress = Math.max(0, Math.min(1, progress)); 
 
             // =======================================================
-            // 💡 滑動間隔精準控制：
-            // - 第一階段 (進度 25%)：觸發 2、3（緊湊出現）
-            // - 第二階段 (進度 45%)：觸發 5、6（與前一組滑動間隔小）
-            // - 第三階段 (進度 65%)：觸發 1、4（與 5 之間滑動間隔拉大）
+            // 💡 滾動進度分配（新增第四階段，讓 7 完美疊加在最上方）：
+            // - 第一階段 (進度 >= 20%)：觸發 2、3
+            // - 第二階段 (進度 >= 40%)：觸發 5、6
+            // - 第三階段 (進度 >= 60%)：觸發 1、4
+            // - 第四階段 (進度 >= 80%)：觸發 7（過渡圖疊在最上層覆蓋）
             // =======================================================
             
             // 第一組判定 (工作區域 2, 3)
-            if (progress >= 0.25) {
+            if (progress >= 0.20) {
                 group1.forEach(step => step.classList.add('active'));
             } else {
                 group1.forEach(step => step.classList.remove('active'));
             }
 
             // 第二組 A 判定 (工作區域 5, 6)
-            if (progress >= 0.45) {
+            if (progress >= 0.40) {
                 group2A.forEach(step => step.classList.add('active'));
             } else {
                 group2A.forEach(step => step.classList.remove('active'));
             }
 
             // 第二組 B 判定 (工作區域 1, 4)
-            if (progress >= 0.65) {
+            if (progress >= 0.60) {
                 group2B.forEach(step => step.classList.add('active'));
             } else {
                 group2B.forEach(step => step.classList.remove('active'));
+            }
+
+            // 過渡圖 7 判定
+            if (progress >= 0.80) {
+                groupTransit.forEach(step => step.classList.add('active'));
+            } else {
+                groupTransit.forEach(step => step.classList.remove('active'));
             }
         });
     </script>
