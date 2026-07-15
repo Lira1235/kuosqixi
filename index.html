@@ -113,7 +113,7 @@
             transform: translateY(100px); 
             pointer-events: none;
             
-            /* 調整：過渡時間延長至 1.2s，實現更溫和細緻的慢速升起與漸顯 */
+            /* 過渡時間延長至 1.2s，實現更溫和細緻的慢速升起與漸顯 */
             transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: opacity, transform;
         }
@@ -161,7 +161,7 @@
             </div>
 
 
-            <!-- 【階段二：下一次滑動顯現】 -->
+            <!-- 【階段二：下一次滑動顯現（與第一組間隔縮小）】 -->
             <!-- 3. 工作區域 5 
                  出現順序：第二階段（最先，延遲 0s）
                  疊加順序：第二層 (z-index: 9) -->
@@ -253,6 +253,12 @@
             let progress = -rect.top / scrollableHeight;
             progress = Math.max(0, Math.min(1, progress)); 
 
+            // =======================================================
+            // 💡 縮短滑動間隔調整：
+            // - 第一組 (2, 3) 依舊在進度 25% (0.25) 觸發
+            // - 第二組 (5, 6, 1, 4) 提前至進度 45% (0.45) 觸發 (原先為 65%)
+            // =======================================================
+            
             // 第一組判定 (工作區域 2, 3)
             if (progress >= 0.25) {
                 group1.forEach(step => step.classList.add('active'));
@@ -261,7 +267,7 @@
             }
 
             // 第二組判定 (工作區域 5, 6, 1, 4)
-            if (progress >= 0.65) {
+            if (progress >= 0.45) {
                 group2.forEach(step => step.classList.add('active'));
             } else {
                 group2.forEach(step => step.classList.remove('active'));
