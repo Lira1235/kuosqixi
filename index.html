@@ -20,8 +20,8 @@
             overflow-x: hidden;
         }
 
-        /* ─── 標題區優化 ─── */
-        /* 改用 absolute 放在滾動容器頂部，讓它隨瀏覽器原生滾動自然上移，零卡頓！ */
+        /* ─── 標題區 ─── */
+        /* 使用 absolute 定位在滾動容器頂部，讓它隨網頁自然滾動上移，不佔用任何 JS 運算 */
         .title-container {
             display: flex;
             justify-content: center;
@@ -36,8 +36,7 @@
             left: 0;
             z-index: 20; 
             background-color: transparent;
-            pointer-events: none; /* 避免阻擋下方滾動 */
-            /* 強制啟用 GPU 加速 */
+            pointer-events: none; 
             transform: translate3d(0, 0, 0);
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
@@ -46,9 +45,9 @@
         h1 {
             text-align: center;
             color: #e99e9d;
-            font-size: 8vw; /* 隨螢幕寬度縮放 */
+            font-size: 8vw; 
             margin: 0;
-            white-space: nowrap; /* 強制在同一列 */
+            white-space: nowrap; 
             letter-spacing: 2px;
         }
 
@@ -61,7 +60,7 @@
         /* 內容區塊通用設定 (步驟二、三、四、五) */
         .content-section {
             width: 100%;
-            margin-bottom: 60px; /* 每個步驟之間的間距 */
+            margin-bottom: 60px; 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -80,19 +79,20 @@
             align-self: flex-start;
         }
 
-        /* 圖片基本設定 */
+        /* 圖片基本設定：開啟非同步解碼優化與硬體加速準備 */
         img {
             width: 100% !important;
             height: auto;
             display: block;
             box-shadow: none;
             border-radius: 0;
+            transform: translateZ(0); /* 啟用 GPU 渲染加速 */
         }
 
         /* ========================================== 【步驟一】滾動粘性疊加區 CSS ========================================== */
         .step1-scroll-container {
             position: relative;
-            height: 500vh; /* 提供足夠的物理滾動距離 */
+            height: 500vh; 
             width: 100%;
         }
 
@@ -109,7 +109,7 @@
             -webkit-backface-visibility: hidden;
         }
 
-        /* 步驟一內的每一張圖片容器 */
+        /* 步驟一內的每一張圖片容器 (硬體加速優化) */
         .step1-item {
             position: absolute;
             top: 0;
@@ -119,11 +119,10 @@
             display: flex;
             align-items: flex-start;
             opacity: 0; 
-            transform: translate3d(0, 80px, 0); 
+            transform: translate3d(0, 80px, 0); /* 初始位於下方，滑動時物理上移 */
             pointer-events: none;
             transition: none; 
-            /* 預先告訴瀏覽器此圖層會變動，大幅提高渲染效率 */
-            will-change: opacity, transform;
+            will-change: transform, opacity; /* 預先通知瀏覽器，避免重新排版 (Layout) */
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
         }
@@ -138,7 +137,7 @@
     <!-- ─── 步驟一：獨立滾動疊加區 ─── -->
     <div class="step1-scroll-container">
         
-        <!-- 標題放入滾動區頂部，達成 100% 順暢的物理隨滑上移 -->
+        <!-- 標題放入滾動區頂部，達成原生、零卡頓的物理隨滑上移 -->
         <div class="title-container">
             <h1>七夕收涎儀式流程</h1>
         </div>
@@ -146,55 +145,55 @@
         <div class="step1-sticky-frame">
 
             <!-- 【階段一：第一次物理顯現】 -->
-            <!-- 1. 工作區域 3 -->
+            <!-- 1. 工作區域 3 (預設從 80px 物理上移至 0px) -->
             <div class="step1-item step-3" style="z-index: 10;">
                 <div class="img-wrapper">
-                    <img src="工作區域 3.png">
+                    <img src="工作區域 3.png" decoding="async">
                 </div>
             </div>
 
-            <!-- 2. 工作區域 2 -->
+            <!-- 2. 工作區域 2 (預設從 80px 物理上移至 0px) -->
             <div class="step1-item step-2" style="z-index: 5;">
                 <div class="img-wrapper">
-                    <img src="工作區域 2.png">
+                    <img src="工作區域 2.png" decoding="async">
                 </div>
             </div>
 
             <!-- 【階段二：下一次物理顯現（5、6 先出）】 -->
-            <!-- 3. 工作區域 5 -->
+            <!-- 3. 工作區域 5 (預設從 80px 物理上移至 0px) -->
             <div class="step1-item step-5" style="z-index: 9;">
                 <div class="img-wrapper">
-                    <img src="工作區域 5.png">
+                    <img src="工作區域 5.png" decoding="async">
                 </div>
             </div>
 
-            <!-- 4. 工作區域 6 -->
+            <!-- 4. 工作區域 6 (預設從 80px 物理上移至 0px) -->
             <div class="step1-item step-6" style="z-index: 8;">
                 <div class="img-wrapper">
-                    <img src="工作區域 6.png">
+                    <img src="工作區域 6.png" decoding="async">
                 </div>
             </div>
 
-            <!-- 【階段三：最後物理顯現（1、4 後出）】 -->
-            <!-- 5. 工作區域 1 -->
+            <!-- 【階段三：最後物理顯現（1、4 後出，且位移縮短）】 -->
+            <!-- 5. 工作區域 1 (預設從較短的 30px 物理上移至 0px) -->
             <div class="step1-item step-1" style="z-index: 7;">
                 <div class="img-wrapper">
-                    <img src="工作區域 1.png">
+                    <img src="工作區域 1.png" decoding="async">
                 </div>
             </div>
 
-            <!-- 6. 工作區域 4 -->
+            <!-- 6. 工作區域 4 (預設從較短的 30px 物理上移至 0px) -->
             <div class="step1-item step-4" style="z-index: 6;">
                 <div class="img-wrapper">
-                    <img src="工作區域 4.png">
+                    <img src="工作區域 4.png" decoding="async">
                 </div>
             </div>
 
-            <!-- 【階段四：過渡圖疊加在最上方】 -->
-            <!-- 7. 工作區域 7 -->
+            <!-- 【階段四：過渡圖疊加在最上方，覆蓋步驟一所有圖】 -->
+            <!-- 7. 工作區域 7 (過渡圖，直接淡入) -->
             <div class="step1-item step-7" style="z-index: 12;">
                 <div class="img-wrapper">
-                    <img src="工作區域 7.png">
+                    <img src="工作區域 7.png" decoding="async">
                 </div>
             </div>
 
@@ -204,30 +203,31 @@
     <!-- ─── 步驟二及後續內容 ─── -->
     <div class="content-section">
         <p>2.讓小孩的雙腳跨在戶碇兩旁。</p>
-        <img src="web3.png">
+        <img src="web3.png" decoding="async" loading="lazy">
     </div>
 
     <div class="content-section">
         <p>3.用七夕粿擦嘴。</p>
-        <img src="web4.png">
+        <img src="web4.png" decoding="async" loading="lazy">
     </div>
 
     <div class="content-section">
         <p>4.讓小孩咬一小口七夕粿吐在地上，家長唸：「丟一口粿，死後入土，乎六畜吞入肚，保我兒孫無事故。」</p>
-        <img src="web5.png">
+        <img src="web5.png" decoding="async" loading="lazy">
     </div>
 
     <div class="content-section">
         <p>5.祭拜完後焚燒金紙，將胭脂置於屋頂 or 壁角，給織女打扮使用</p>
-        <img src="web5.png">
+        <img src="web5.png" decoding="async" loading="lazy">
     </div>
 
     <div class="content-section" style="margin-bottom: 0;">
-        <img src="webb.png">
+        <img src="webb.png" decoding="async" loading="lazy">
     </div>
 
-    <!-- 滾動偵測 JavaScript (效能優化版) -->
+    <!-- 滾動偵測 JavaScript (高效能硬體加速引擎) -->
     <script>
+        // 物理進度線性內插計算
         function getInterpolatedValue(progress, start, end, fromVal, toVal) {
             if (progress < start) return fromVal;
             if (progress > end) return toVal;
@@ -253,16 +253,16 @@
                 return;
             }
 
+            // 計算滾動比例 progress (0 ~ 1)
             const rect = container.getBoundingClientRect();
             const scrollableHeight = rect.height - window.innerHeight;
             let progress = -rect.top / scrollableHeight;
             progress = Math.max(0, Math.min(1, progress));
 
             // =======================================================
-            // 標題上移改由 CSS Absolute 天然滾動處理，此處不作任何 JS 計算，大幅釋放 CPU！
-            // =======================================================
-
             // 1. 階段一：工作區域 3 & 工作區域 2 (15% -> 45%)
+            // - 隨滑動距離從 80px 物理上移至 0px
+            // =======================================================
             const img3Opacity = getInterpolatedValue(progress, 0.15, 0.35, 0, 1);
             const img3Y = getInterpolatedValue(progress, 0.15, 0.35, 80, 0);
             if (img3) {
@@ -277,7 +277,10 @@
                 img2.style.transform = `translate3d(0, ${img2Y}px, 0)`;
             }
 
+            // =======================================================
             // 2. 階段二：工作區域 5 & 工作區域 6 (35% -> 65%)
+            // - 隨滑動距離從 80px 物理上移至 0px
+            // =======================================================
             const img5Opacity = getInterpolatedValue(progress, 0.35, 0.55, 0, 1);
             const img5Y = getInterpolatedValue(progress, 0.35, 0.55, 80, 0);
             if (img5) {
@@ -292,7 +295,10 @@
                 img6.style.transform = `translate3d(0, ${img6Y}px, 0)`;
             }
 
+            // =======================================================
             // 3. 階段三：工作區域 1 & 工作區域 4 (55% -> 85%)
+            // - 隨滑動距離從較短的 30px 物理上移至 0px
+            // =======================================================
             const img1Opacity = getInterpolatedValue(progress, 0.55, 0.75, 0, 1);
             const img1Y = getInterpolatedValue(progress, 0.55, 0.75, 30, 0);
             if (img1) {
@@ -307,7 +313,9 @@
                 img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
             }
 
-            // 4. 過渡圖 7 物理淡入 & 整個黏性框移出 (75% -> 100%)
+            // =======================================================
+            // 4. 階段四：過渡圖 7 物理淡入 & 整個黏性框上滑移出 (75% -> 100%)
+            // =======================================================
             const img7Opacity = getInterpolatedValue(progress, 0.75, 0.95, 0, 1);
             if (img7) {
                 img7.style.opacity = img7Opacity;
@@ -320,7 +328,7 @@
             isTicking = false;
         }
 
-        // 使用 requestAnimationFrame 進行滾動性能節流優化
+        // 使用 requestAnimationFrame 進行滾動物理節流，消除抖動與卡頓
         function onScroll() {
             if (!isTicking) {
                 window.requestAnimationFrame(updateScrollEffects);
@@ -328,6 +336,7 @@
             }
         }
 
+        // 監聽滾動事件，使用 passive: true 提升行動裝置的滑動響應速度
         window.addEventListener('scroll', onScroll, { passive: true });
         window.addEventListener('DOMContentLoaded', updateScrollEffects);
     </script>
