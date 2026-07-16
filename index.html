@@ -1,507 +1,478 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>七夕收涎儀式流程</title>
-    <style>
-        /* 移除預設邊距，確保圖片 100% 滿版 */
-        body {
-            background-image: url('web工作區域 1.png');
-            background-size: 100% auto;
-            background-attachment: scroll;
-            background-position: center top;
-            background-repeat: no-repeat;
-            min-height: 100vh;
-            background-color: #a24731;
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
-            overflow-x: hidden;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>七夕收涎儀式流程</title>
+  <style>
+    /* 移除預設邊距，確保圖片 100% 滿版 */
+    body {
+      background-image: url('web工作區域 1.png');
+      background-size: 100% auto;
+      background-attachment: scroll;
+      background-position: center top;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      background-color: #a24731;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      overflow-x: hidden;
+    }
 
-        /* ─── 標題區 ─── */
-        .title-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
-            box-sizing: border-box;
-            padding: 0 20px;
-            position: absolute; 
-            top: 0;
-            left: 0;
-            z-index: 25; /* 確保標題層級最高 */
-            background-color: transparent;
-            pointer-events: none; 
-            transform: translate3d(0, 0, 0);
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
+    /* ─── 標題區 ─── */
+    .title-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      box-sizing: border-box;
+      padding: 0 20px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 25; /* 確保標題層級最高 */
+      background-color: transparent;
+      pointer-events: none;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
 
-        h1 {
-            text-align: center;
-            color: #e99e9d;
-            font-size: 8vw; 
-            margin: 0;
-            white-space: nowrap; 
-            letter-spacing: 2px;
-        }
+    h1 {
+      text-align: center;
+      color: #e99e9d;
+      font-size: 8vw;
+      margin: 0;
+      white-space: nowrap;
+      letter-spacing: 2px;
+    }
 
-        @media (min-width: 768px) {
-            h1 {
-                font-size: 60px;
-            }
-        }
+    @media (min-width: 768px) {
+      h1 {
+        font-size: 60px;
+      }
+    }
 
-        /* 內容區塊通用設定 (步驟三、四、五) */
-        .content-section {
-            width: 100%;
-            margin-bottom: 60px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 30; /* 高於滾動粘性區，隨著自然滾動由下往上推進 */
-            background-color: #a24731; /* 設為背景色，確保完全遮擋下方粘性內容 */
-        }
+    /* 內容區塊通用設定 (步驟三、四、五) */
+    .content-section {
+      width: 100%;
+      margin-bottom: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 30; /* 高於滾動粘性區，隨著自然滾動由下往上推進 */
+      background-color: #a24731; /* 設為背景色，確保完全遮擋下方粘性內容 */
+    }
 
-        /* 段落文字樣式 */
-        p {
-            text-align: left;
-            font-size: 20px;
-            line-height: 1.5;
-            color: #ffffff;
-            margin: 0 0 15px 0;
-            padding: 0 15px;
-            align-self: flex-start;
-        }
+    /* 段落文字樣式 */
+    p {
+      text-align: left;
+      font-size: 20px;
+      line-height: 1.5;
+      color: #ffffff;
+      margin: 0 0 15px 0;
+      padding: 0 15px;
+      align-self: flex-start;
+    }
 
-        /* 圖片基本設定：開啟非同步解碼優化與硬體加速準備 */
-        img {
-            width: 100% !important;
-            height: auto;
-            display: block;
-            box-shadow: none;
-            border-radius: 0;
-            transform: translateZ(0); /* 啟用 GPU 渲染加速 */
-        }
+    /* 圖片基本設定：開啟非同步解碼優化與硬體加速準備 */
+    img {
+      width: 100% !important;
+      height: auto;
+      display: block;
+      box-shadow: none;
+      border-radius: 0;
+      transform: translateZ(0); /* 啟用 GPU 渲染加速 */
+    }
 
-        /* ========================================== 通用滾動粘性疊加區 CSS ========================================== */
-        .step-scroll-container {
-            position: relative;
-            height: 380vh; /* 滾動軌道總長度 */
-            width: 100%;
-        }
+    /* ========================================== 通用滾動粘性疊加區 CSS ========================================== */
+    .step-scroll-container {
+      position: relative;
+      height: 380vh; /* 滾動軌道總長度 */
+      width: 100%;
+    }
 
-        .step-sticky-frame {
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            height: 100dvh;
-            width: 100%;
-            will-change: transform;
-            transform: translate3d(0, 0, 0);
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
+    .step-sticky-frame {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100dvh;
+      width: 100%;
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
 
-        /* 圖片群組容器，包裹它們以便集體上滑 */
-        .step-images-group {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            will-change: transform;
-            transform: translate3d(0, 0, 0);
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
+    /* 圖片群組容器，包裹它們以便集體上滑 */
+    .step-images-group {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
 
-        /* 每一張疊加圖片容器 (硬體加速優化) */
-        .step-item {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: flex-start; /* 對齊頂部 */
-            opacity: 0; 
-            transform: translate3d(0, 40px, 0); /* 初始滑動距離 */
-            pointer-events: none;
-            transition: none; 
-            will-change: transform, opacity;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
+    /* 每一張疊加圖片容器 (硬體加速優化) */
+    .step-item {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: flex-start; /* 對齊頂部 */
+      opacity: 0;
+      transform: translate3d(0, 40px, 0); /* 初始滑動距離 */
+      pointer-events: none;
+      transition: none;
+      will-change: transform, opacity;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
 
-        /* 專門讓過渡圖 7 初始置於視窗最下方，與步驟一產生交疊並方便由下往上滑入 */
-        .step-item.step-7-container {
-            align-items: flex-end; /* 對齊底部 */
-            transform: translate3d(0, 100vh, 0); 
-            will-change: transform, opacity;
-        }
+    /* 專門讓過渡圖 7 初始置於視窗最下方，與步驟一產生交疊並方便由下往上滑入 */
+    .step-item.step-7-container {
+      align-items: flex-end; /* 對齊底部 */
+      transform: translate3d(0, 100vh, 0);
+      will-change: transform, opacity;
+    }
 
-        /* 專門讓步驟二的圖片群組對齊底部，準備從最下方跟隨過渡圖 7 滑入 */
-        .step2-images-group .step-item {
-            align-items: flex-end; /* 讓步驟二的所有圖片對齊底部，緊跟過渡圖 7 */
-            transform: translate3d(0, 100vh, 0); /* 初始完全藏於最下方 */
-        }
+    /* 修改：讓步驟二的所有圖片改為頂部對齊並疊在同一畫面，初始位移改為 40px */
+    .step2-images-group .step-item {
+      align-items: flex-start;
+      transform: translate3d(0, 40px, 0);
+    }
 
-        .img-wrapper {
-            width: 100%;
-        }
-    </style>
+    .img-wrapper {
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- ─── 步驟一：獨立滾動疊加區 ─── -->
-    <div class="step-scroll-container step1-scroll-container">
-        
-        <!-- 標題放入滾動區頂部，達成原生、零卡頓的物理隨滑上移 -->
-        <div class="title-container">
-            <h1>七夕收涎儀式流程</h1>
+  <!-- ─── 步驟一：獨立滾動疊加區 ─── -->
+  <div class="step-scroll-container step1-scroll-container">
+    <!-- 標題放入滾動區頂部，達成原生、零卡頓的物理隨滑上移 -->
+    <div class="title-container">
+      <h1>七夕收涎儀式流程</h1>
+    </div>
+    <div class="step-sticky-frame step1-sticky-frame">
+      <!-- 步驟一 1~6 圖片群組 -->
+      <div class="step-images-group step1-images-group">
+        <!-- 【階段一：第一次物理顯現】 -->
+        <!-- 1. 工作區域 3 -->
+        <div class="step-item step-3" style="z-index: 10;">
+          <div class="img-wrapper">
+            <img src="工作區域 3.png" decoding="async">
+          </div>
         </div>
-
-        <div class="step-sticky-frame step1-sticky-frame">
-
-            <!-- 步驟一 1~6 圖片群組 -->
-            <div class="step-images-group step1-images-group">
-
-                <!-- 【階段一：第一次物理顯現】 -->
-                <!-- 1. 工作區域 3 -->
-                <div class="step-item step-3" style="z-index: 10;">
-                    <div class="img-wrapper">
-                        <img src="工作區域 3.png" decoding="async">
-                    </div>
-                </div>
-
-                <!-- 2. 工作區域 2 -->
-                <div class="step-item step-2" style="z-index: 5;">
-                    <div class="img-wrapper">
-                        <img src="工作區域 2.png" decoding="async">
-                    </div>
-                </div>
-
-                <!-- 【階段二：下一次物理顯現（5、6 先出）】 -->
-                <!-- 3. 工作區域 5 -->
-                <div class="step-item step-5" style="z-index: 9;">
-                    <div class="img-wrapper">
-                        <img src="工作區域 5.png" decoding="async">
-                    </div>
-                </div>
-
-                <!-- 4. 工作區域 6 -->
-                <div class="step-item step-6" style="z-index: 8;">
-                    <div class="img-wrapper">
-                        <img src="工作區域 6.png" decoding="async">
-                    </div>
-                </div>
-
-                <!-- 【階段三：最後物理顯現（1、4 後出）】 -->
-                <!-- 5. 工作區域 1 -->
-                <div class="step-item step-1" style="z-index: 7;">
-                    <div class="img-wrapper">
-                        <img src="工作區域 1.png" decoding="async">
-                    </div>
-                </div>
-
-                <!-- 6. 工作區域 4 -->
-                <div class="step-item step-4" style="z-index: 6;">
-                    <div class="img-wrapper">
-                        <img src="工作區域 4.png" decoding="async">
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- 【階段四：過渡圖 7 獨立放置於 step-sticky-frame 中】 -->
-            <div class="step-item step-7-container step-7" style="z-index: 2;">
-                <div class="img-wrapper">
-                    <img src="工作區域 7.png" decoding="async">
-                </div>
-            </div>
-
+        <!-- 2. 工作區域 2 -->
+        <div class="step-item step-2" style="z-index: 5;">
+          <div class="img-wrapper">
+            <img src="工作區域 2.png" decoding="async">
+          </div>
         </div>
-    </div>
-
-
-    <!-- ─── 步驟二：獨立滾動疊加區 ─── -->
-    <div class="step-scroll-container step2-scroll-container">
-
-        <div class="step-sticky-frame step2-sticky-frame">
-
-            <!-- 步驟二 圖片群組 (將 9 與 11 放進群組內與 10,12,13,14 一同重疊滑動) -->
-            <div class="step-images-group step2-images-group">
-
-                <!-- 【階段一：13 先出現】 -->
-                <div class="step-item step-13" style="z-index: 14;">
-                    <div class="img-wrapper">
-                        <img src="工作區域 13.png" decoding="async">
-                    </div>
-                </div>
-
-                <!-- 【階段二：12 出現】 -->
-                <div class="step-item step-12" style="z-index: 15;">
-                    <div class="img-wrapper">
-                        <img src="工作區域 12.png" decoding="async">
-                    </div>
-                </div>
-
-                <!-- 【階段三：10 出現】 -->
-                <div class="step-item step-10" style="z-index: 12;">
-                    <div class="img-wrapper">
-                        <img src="工作區域 10.png" decoding="async">
-                    </div>
-                </div>
-
-                <!-- 【階段四：14 出現】 -->
-                <div class="step-item step-14" style="z-index: 11;">
-                    <div class="img-wrapper">
-                        <img src="工作區域 14.png" decoding="async">
-                    </div>
-                </div>
-
-                <!-- 【階段五：過渡同步圖 9 與 11 (已移入群組，與上述圖片完美重疊)】 -->
-                <div class="step-item step-11" style="z-index: 13;">
-                    <div class="img-wrapper">
-                        <img src="工作區域 11.png" decoding="async">
-                    </div>
-                </div>
-
-                <div class="step-item step-9" style="z-index: 10;">
-                    <div class="img-wrapper">
-                        <img src="工作區域 9.png" decoding="async">
-                    </div>
-                </div>
-
-            </div>
-
+        <!-- 【階段二：下一次物理顯現（5、6 先出）】 -->
+        <!-- 3. 工作區域 5 -->
+        <div class="step-item step-5" style="z-index: 9;">
+          <div class="img-wrapper">
+            <img src="工作區域 5.png" decoding="async">
+          </div>
         </div>
+        <!-- 4. 工作區域 6 -->
+        <div class="step-item step-6" style="z-index: 8;">
+          <div class="img-wrapper">
+            <img src="工作區域 6.png" decoding="async">
+          </div>
+        </div>
+        <!-- 【階段三：最後物理顯現（1、4 後出）】 -->
+        <!-- 5. 工作區域 1 -->
+        <div class="step-item step-1" style="z-index: 7;">
+          <div class="img-wrapper">
+            <img src="工作區域 1.png" decoding="async">
+          </div>
+        </div>
+        <!-- 6. 工作區域 4 -->
+        <div class="step-item step-4" style="z-index: 6;">
+          <div class="img-wrapper">
+            <img src="工作區域 4.png" decoding="async">
+          </div>
+        </div>
+      </div>
+      <!-- 【階段四：過渡圖 7 獨立放置於 step-sticky-frame 中】 -->
+      <div class="step-item step-7-container step-7" style="z-index: 2;">
+        <div class="img-wrapper">
+          <img src="工作區域 7.png" decoding="async">
+        </div>
+      </div>
     </div>
+  </div>
 
-
-    <!-- ─── 步驟三及後續內容 ─── -->
-    <div class="content-section">
-        <p>3.用七夕粿擦嘴。</p>
-        <img src="web4.png" decoding="async" loading="lazy">
+  <!-- ─── 步驟二：獨立滾動疊加區 ─── -->
+  <div class="step-scroll-container step2-scroll-container">
+    <div class="step-sticky-frame step2-sticky-frame">
+      <!-- 步驟二 圖片群組 (將 9 與 11 放進群組內與 10,12,13,14 一同重疊滑動) -->
+      <div class="step-images-group step2-images-group">
+        <!-- 【階段一：13 先出現】 -->
+        <div class="step-item step-13" style="z-index: 14;">
+          <div class="img-wrapper">
+            <img src="工作區域 13.png" decoding="async">
+          </div>
+        </div>
+        <!-- 【階段二：12 出現】 -->
+        <div class="step-item step-12" style="z-index: 15;">
+          <div class="img-wrapper">
+            <img src="工作區域 12.png" decoding="async">
+          </div>
+        </div>
+        <!-- 【階段三：10 出現】 -->
+        <div class="step-item step-10" style="z-index: 12;">
+          <div class="img-wrapper">
+            <img src="工作區域 10.png" decoding="async">
+          </div>
+        </div>
+        <!-- 【階段四：14 出現】 -->
+        <div class="step-item step-14" style="z-index: 11;">
+          <div class="img-wrapper">
+            <img src="工作區域 14.png" decoding="async">
+          </div>
+        </div>
+        <!-- 【階段五：過渡同步圖 9 與 11 (已移入群組，與上述圖片完美重疊)】 -->
+        <div class="step-item step-11" style="z-index: 13;">
+          <div class="img-wrapper">
+            <img src="工作區域 11.png" decoding="async">
+          </div>
+        </div>
+        <div class="step-item step-9" style="z-index: 10;">
+          <div class="img-wrapper">
+            <img src="工作區域 9.png" decoding="async">
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="content-section">
-        <p>4.讓小孩咬一小口七夕粿吐在地上，家長唸：「丟一口粿，死後入土，乎六畜吞入肚，保我兒孫無事故。」</p>
-        <img src="web5.png" decoding="async" loading="lazy">
-    </div>
+  <!-- ─── 步驟三及後續內容 ─── -->
+  <div class="content-section">
+    <p>3.用七夕粿擦嘴。</p>
+    <img src="web4.png" decoding="async" loading="lazy">
+  </div>
+  <div class="content-section">
+    <p>4.讓小孩咬一小口七夕粿吐在地上，家長唸：「丟一口粿，死後入土，乎六畜吞入肚，保我兒孫無事故。」</p>
+    <img src="web5.png" decoding="async" loading="lazy">
+  </div>
+  <div class="content-section">
+    <p>5.祭拜完後焚燒金紙，將胭脂置於屋頂 or 壁角，給織女打扮使用</p>
+    <img src="web5.png" decoding="async" loading="lazy">
+  </div>
+  <div class="content-section" style="margin-bottom: 0;">
+    <img src="webb.png" decoding="async" loading="lazy">
+  </div>
 
-    <div class="content-section">
-        <p>5.祭拜完後焚燒金紙，將胭脂置於屋頂 or 壁角，給織女打扮使用</p>
-        <img src="web5.png" decoding="async" loading="lazy">
-    </div>
+  <!-- 滾動偵測 JavaScript (高效能雙滾動軌道硬體加速引擎) -->
+  <script>
+    // 物理進度線性內插計算
+    function getInterpolatedValue(progress, start, end, fromVal, toVal) {
+      if (progress < start) return fromVal;
+      if (progress > end) return toVal;
+      return fromVal + (toVal - fromVal) * ((progress - start) / (end - start));
+    }
 
-    <div class="content-section" style="margin-bottom: 0;">
-        <img src="webb.png" decoding="async" loading="lazy">
-    </div>
+    let isTicking = false;
 
-    <!-- 滾動偵測 JavaScript (高效能雙滾動軌道硬體加速引擎) -->
-    <script>
-        // 物理進度線性內插計算
-        function getInterpolatedValue(progress, start, end, fromVal, toVal) {
-            if (progress < start) return fromVal;
-            if (progress > end) return toVal;
-            return fromVal + (toVal - fromVal) * ((progress - start) / (end - start));
+    function updateScrollEffects() {
+      // =======================================================
+      // 【步驟一滾動控制軌道】
+      // =======================================================
+      const container1 = document.querySelector('.step1-scroll-container');
+      const stickyFrame1 = document.querySelector('.step1-sticky-frame');
+      const imagesGroup1 = document.querySelector('.step1-images-group');
+      const img3 = document.querySelector('.step-3');
+      const img2 = document.querySelector('.step-2');
+      const img5 = document.querySelector('.step-5');
+      const img6 = document.querySelector('.step-6');
+      const img1 = document.querySelector('.step-1');
+      const img4 = document.querySelector('.step-4');
+      const img7 = document.querySelector('.step-7');
+
+      if (container1 && stickyFrame1) {
+        const rect1 = container1.getBoundingClientRect();
+        const scrollableHeight1 = rect1.height - window.innerHeight;
+        let progress1 = -rect1.top / scrollableHeight1;
+        progress1 = Math.max(0, Math.min(1, progress1));
+
+        // 階段一：工作區域 3 & 工作區域 2
+        const img3Opacity = getInterpolatedValue(progress1, 0.05, 0.15, 0, 1);
+        const img3Y = getInterpolatedValue(progress1, 0.05, 0.15, 40, 0);
+        if (img3) {
+          img3.style.opacity = img3Opacity;
+          img3.style.transform = `translate3d(0, ${img3Y}px, 0)`;
         }
 
-        let isTicking = false;
-
-        function updateScrollEffects() {
-            // =======================================================
-            // 【步驟一滾動控制軌道】
-            // =======================================================
-            const container1 = document.querySelector('.step1-scroll-container');
-            const stickyFrame1 = document.querySelector('.step1-sticky-frame');
-            const imagesGroup1 = document.querySelector('.step1-images-group');
-            
-            const img3 = document.querySelector('.step-3');
-            const img2 = document.querySelector('.step-2');
-            const img5 = document.querySelector('.step-5');
-            const img6 = document.querySelector('.step-6');
-            const img1 = document.querySelector('.step-1');
-            const img4 = document.querySelector('.step-4');
-            const img7 = document.querySelector('.step-7');
-
-            if (container1 && stickyFrame1) {
-                const rect1 = container1.getBoundingClientRect();
-                const scrollableHeight1 = rect1.height - window.innerHeight;
-                let progress1 = -rect1.top / scrollableHeight1;
-                progress1 = Math.max(0, Math.min(1, progress1));
-
-                // 階段一：工作區域 3 & 工作區域 2
-                const img3Opacity = getInterpolatedValue(progress1, 0.05, 0.15, 0, 1);
-                const img3Y = getInterpolatedValue(progress1, 0.05, 0.15, 40, 0);
-                if (img3) {
-                    img3.style.opacity = img3Opacity;
-                    img3.style.transform = `translate3d(0, ${img3Y}px, 0)`;
-                }
-
-                const img2Opacity = getInterpolatedValue(progress1, 0.08, 0.20, 0, 1);
-                const img2Y = getInterpolatedValue(progress1, 0.08, 0.20, 40, 0);
-                if (img2) {
-                    img2.style.opacity = img2Opacity;
-                    img2.style.transform = `translate3d(0, ${img2Y}px, 0)`;
-                }
-
-                // 階段二：工作區域 5 & 工作區域 6
-                const img5Opacity = getInterpolatedValue(progress1, 0.18, 0.28, 0, 1);
-                const img5Y = getInterpolatedValue(progress1, 0.18, 0.28, 40, 0);
-                if (img5) {
-                    img5.style.opacity = img5Opacity;
-                    img5.style.transform = `translate3d(0, ${img5Y}px, 0)`;
-                }
-
-                const img6Opacity = getInterpolatedValue(progress1, 0.22, 0.35, 0, 1);
-                const img6Y = getInterpolatedValue(progress1, 0.22, 0.35, 40, 0);
-                if (img6) {
-                    img6.style.opacity = img6Opacity;
-                    img6.style.transform = `translate3d(0, ${img6Y}px, 0)`;
-                }
-
-                // 階段三：工作區域 1 & 工作區域 4
-                const img1Opacity = getInterpolatedValue(progress1, 0.32, 0.45, 0, 1);
-                const img1Y = getInterpolatedValue(progress1, 0.32, 0.45, 20, 0);
-                if (img1) {
-                    img1.style.opacity = img1Opacity;
-                    img1.style.transform = `translate3d(0, ${img1Y}px, 0)`;
-                }
-
-                const img4Opacity = getInterpolatedValue(progress1, 0.38, 0.52, 0, 1);
-                const img4Y = getInterpolatedValue(progress1, 0.38, 0.52, 20, 0);
-                if (img4) {
-                    img4.style.opacity = img4Opacity;
-                    img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
-                }
-
-                // 階段四：步驟一（1~6）上移，同時帶出下方的過渡圖 7
-                const groupTranslateY = getInterpolatedValue(progress1, 0.55, 0.82, 0, -100);
-                if (imagesGroup1) {
-                    imagesGroup1.style.transform = `translate3d(0, ${groupTranslateY}vh, 0)`;
-                }
-
-                // 過渡圖 7 從最下方（100vh）被向上帶出
-                const img7Opacity = getInterpolatedValue(progress1, 0.55, 0.78, 0, 1);
-                let img7Y = getInterpolatedValue(progress1, 0.55, 0.82, window.innerHeight, 0);
-
-                // 階段五：滾動快結束時（> 0.85），過渡圖 7 繼續往上滑動移出視窗
-                if (progress1 >= 0.85) {
-                    const finalY = getInterpolatedValue(progress1, 0.85, 1.00, 0, -100);
-                    if (img7) {
-                        img7.style.opacity = getInterpolatedValue(progress1, 0.85, 1.00, 1, 0);
-                        img7.style.transform = `translate3d(0, ${finalY}vh, 0)`;
-                    }
-                } else {
-                    if (img7) {
-                        img7.style.opacity = img7Opacity;
-                        img7.style.transform = `translate3d(0, ${img7Y}px, 0)`;
-                    }
-                }
-
-                stickyFrame1.style.transform = 'translate3d(0, 0, 0)';
-            }
-
-
-            // =======================================================
-            // 【步驟二滾動控制軌道】
-            // =======================================================
-            const container2 = document.querySelector('.step2-scroll-container');
-            const stickyFrame2 = document.querySelector('.step2-sticky-frame');
-            const imagesGroup2 = document.querySelector('.step2-images-group');
-
-            const img13 = document.querySelector('.step-13');
-            const img12 = document.querySelector('.step-12');
-            const img10 = document.querySelector('.step-10');
-            const img14 = document.querySelector('.step-14');
-            const img9 = document.querySelector('.step-9');
-            const img11 = document.querySelector('.step-11');
-
-            if (container2 && stickyFrame2) {
-                const rect2 = container2.getBoundingClientRect();
-                const scrollableHeight2 = rect2.height - window.innerHeight;
-                let progress2 = -rect2.top / scrollableHeight2;
-                progress2 = Math.max(0, Math.min(1, progress2));
-
-                // 1. 出現 13 (從螢幕底部 100vh 緊隨過渡圖 7 往上滑移推入)
-                const img13Opacity = getInterpolatedValue(progress2, 0.05, 0.18, 0, 1);
-                const img13Y = getInterpolatedValue(progress2, 0.05, 0.22, window.innerHeight, 0);
-                if (img13) {
-                    img13.style.opacity = img13Opacity;
-                    img13.style.transform = `translate3d(0, ${img13Y}px, 0)`;
-                }
-
-                // 2. 出現 12 (接續 13 底部滑移而上)
-                const img12Opacity = getInterpolatedValue(progress2, 0.10, 0.23, 0, 1);
-                const img12Y = getInterpolatedValue(progress2, 0.10, 0.27, window.innerHeight, 0);
-                if (img12) {
-                    img12.style.opacity = img12Opacity;
-                    img12.style.transform = `translate3d(0, ${img12Y}px, 0)`;
-                }
-
-                // 3. 出現 10
-                const img10Opacity = getInterpolatedValue(progress2, 0.20, 0.33, 0, 1);
-                const img10Y = getInterpolatedValue(progress2, 0.20, 0.37, window.innerHeight, 0);
-                if (img10) {
-                    img10.style.opacity = img10Opacity;
-                    img10.style.transform = `translate3d(0, ${img10Y}px, 0)`;
-                }
-
-                // 4. 出現 14
-                const img14Opacity = getInterpolatedValue(progress2, 0.24, 0.37, 0, 1);
-                const img14Y = getInterpolatedValue(progress2, 0.24, 0.41, window.innerHeight, 0);
-                if (img14) {
-                    img14.style.opacity = img14Opacity;
-                    img14.style.transform = `translate3d(0, ${img14Y}px, 0)`;
-                }
-
-                // 5. 出現 9 與 11 (調整為與其他圖片相同的底部滑移帶入動畫)
-                const img9Opacity = getInterpolatedValue(progress2, 0.32, 0.45, 0, 1);
-                const img9Y = getInterpolatedValue(progress2, 0.32, 0.49, window.innerHeight, 0);
-                if (img9) {
-                    img9.style.opacity = img9Opacity;
-                    img9.style.transform = `translate3d(0, ${img9Y}px, 0)`;
-                }
-
-                const img11Opacity = getInterpolatedValue(progress2, 0.36, 0.49, 0, 1);
-                const img11Y = getInterpolatedValue(progress2, 0.36, 0.53, window.innerHeight, 0);
-                if (img11) {
-                    img11.style.opacity = img11Opacity;
-                    img11.style.transform = `translate3d(0, ${img11Y}px, 0)`;
-                }
-
-                // 6. 整個步驟二群組 (包含 13, 12, 10, 14 還有 9, 11) 一起往上滑移移出
-                const groupTranslateY2 = getInterpolatedValue(progress2, 0.60, 0.85, 0, -100);
-                if (imagesGroup2) {
-                    imagesGroup2.style.transform = `translate3d(0, ${groupTranslateY2}vh, 0)`;
-                }
-
-                stickyFrame2.style.transform = 'translate3d(0, 0, 0)';
-            }
-
-            isTicking = false;
+        const img2Opacity = getInterpolatedValue(progress1, 0.08, 0.20, 0, 1);
+        const img2Y = getInterpolatedValue(progress1, 0.08, 0.20, 40, 0);
+        if (img2) {
+          img2.style.opacity = img2Opacity;
+          img2.style.transform = `translate3d(0, ${img2Y}px, 0)`;
         }
 
-        // 使用 requestAnimationFrame 進行滾動物理節流，消除抖動與卡頓
-        function onScroll() {
-            if (!isTicking) {
-                window.requestAnimationFrame(updateScrollEffects);
-                isTicking = true;
-            }
+        // 階段二：工作區域 5 & 工作區域 6
+        const img5Opacity = getInterpolatedValue(progress1, 0.18, 0.28, 0, 1);
+        const img5Y = getInterpolatedValue(progress1, 0.18, 0.28, 40, 0);
+        if (img5) {
+          img5.style.opacity = img5Opacity;
+          img5.style.transform = `translate3d(0, ${img5Y}px, 0)`;
         }
 
-        // 監聽滾動事件，使用 passive: true 提升行動裝置的滑動響應速度
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('DOMContentLoaded', updateScrollEffects);
-    </script>
+        const img6Opacity = getInterpolatedValue(progress1, 0.22, 0.35, 0, 1);
+        const img6Y = getInterpolatedValue(progress1, 0.22, 0.35, 40, 0);
+        if (img6) {
+          img6.style.opacity = img6Opacity;
+          img6.style.transform = `translate3d(0, ${img6Y}px, 0)`;
+        }
+
+        // 階段三：工作區域 1 & 工作區域 4
+        const img1Opacity = getInterpolatedValue(progress1, 0.32, 0.45, 0, 1);
+        const img1Y = getInterpolatedValue(progress1, 0.32, 0.45, 20, 0);
+        if (img1) {
+          img1.style.opacity = img1Opacity;
+          img1.style.transform = `translate3d(0, ${img1Y}px, 0)`;
+        }
+
+        const img4Opacity = getInterpolatedValue(progress1, 0.38, 0.52, 0, 1);
+        const img4Y = getInterpolatedValue(progress1, 0.38, 0.52, 20, 0);
+        if (img4) {
+          img4.style.opacity = img4Opacity;
+          img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
+        }
+
+        // 階段四：步驟一（1~6）上移，同時帶出下方的過渡圖 7
+        const groupTranslateY = getInterpolatedValue(progress1, 0.55, 0.82, 0, -100);
+        if (imagesGroup1) {
+          imagesGroup1.style.transform = `translate3d(0, ${groupTranslateY}vh, 0)`;
+        }
+
+        // 過渡圖 7 從最下方（100vh）被向上帶出
+        const img7Opacity = getInterpolatedValue(progress1, 0.55, 0.78, 0, 1);
+        let img7Y = getInterpolatedValue(progress1, 0.55, 0.82, window.innerHeight, 0);
+
+        // 階段五：滾動快結束時（> 0.85），過渡圖 7 繼續往上滑動移出視窗
+        if (progress1 >= 0.85) {
+          const finalY = getInterpolatedValue(progress1, 0.85, 1.00, 0, -100);
+          if (img7) {
+            img7.style.opacity = getInterpolatedValue(progress1, 0.85, 1.00, 1, 0);
+            img7.style.transform = `translate3d(0, ${finalY}vh, 0)`;
+          }
+        } else {
+          if (img7) {
+            img7.style.opacity = img7Opacity;
+            img7.style.transform = `translate3d(0, ${img7Y}px, 0)`;
+          }
+        }
+
+        stickyFrame1.style.transform = 'translate3d(0, 0, 0)';
+      }
+
+      // =======================================================
+      // 【步驟二滾動控制軌道】── 修改後：漸顯微幅滑入與頂部重疊邏輯
+      // =======================================================
+      const container2 = document.querySelector('.step2-scroll-container');
+      const stickyFrame2 = document.querySelector('.step2-sticky-frame');
+      const imagesGroup2 = document.querySelector('.step2-images-group');
+      const img13 = document.querySelector('.step-13');
+      const img12 = document.querySelector('.step-12');
+      const img10 = document.querySelector('.step-10');
+      const img14 = document.querySelector('.step-14');
+      const img9 = document.querySelector('.step-9');
+      const img11 = document.querySelector('.step-11');
+
+      if (container2 && stickyFrame2) {
+        const rect2 = container2.getBoundingClientRect();
+        const scrollableHeight2 = rect2.height - window.innerHeight;
+        let progress2 = -rect2.top / scrollableHeight2;
+        progress2 = Math.max(0, Math.min(1, progress2));
+
+        // 1. 出現 13 (從頂部微幅 Y 軸上滑 40px -> 0，比照步驟一)
+        const img13Opacity = getInterpolatedValue(progress2, 0.05, 0.15, 0, 1);
+        const img13Y = getInterpolatedValue(progress2, 0.05, 0.15, 40, 0);
+        if (img13) {
+          img13.style.opacity = img13Opacity;
+          img13.style.transform = `translate3d(0, ${img13Y}px, 0)`;
+        }
+
+        // 2. 出現 12 (重疊滑入 40px -> 0)
+        const img12Opacity = getInterpolatedValue(progress2, 0.12, 0.24, 0, 1);
+        const img12Y = getInterpolatedValue(progress2, 0.12, 0.24, 40, 0);
+        if (img12) {
+          img12.style.opacity = img12Opacity;
+          img12.style.transform = `translate3d(0, ${img12Y}px, 0)`;
+        }
+
+        // 3. 出現 10 (重疊滑入 40px -> 0)
+        const img10Opacity = getInterpolatedValue(progress2, 0.20, 0.32, 0, 1);
+        const img10Y = getInterpolatedValue(progress2, 0.20, 0.32, 40, 0);
+        if (img10) {
+          img10.style.opacity = img10Opacity;
+          img10.style.transform = `translate3d(0, ${img10Y}px, 0)`;
+        }
+
+        // 4. 出現 14 (重疊滑入 40px -> 0)
+        const img14Opacity = getInterpolatedValue(progress2, 0.28, 0.40, 0, 1);
+        const img14Y = getInterpolatedValue(progress2, 0.28, 0.40, 40, 0);
+        if (img14) {
+          img14.style.opacity = img14Opacity;
+          img14.style.transform = `translate3d(0, ${img14Y}px, 0)`;
+        }
+
+        // 5. 出現 9 (微偏移滑入 20px -> 0)
+        const img9Opacity = getInterpolatedValue(progress2, 0.36, 0.48, 0, 1);
+        const img9Y = getInterpolatedValue(progress2, 0.36, 0.48, 20, 0);
+        if (img9) {
+          img9.style.opacity = img9Opacity;
+          img9.style.transform = `translate3d(0, ${img9Y}px, 0)`;
+        }
+
+        // 6. 出現 11 (微偏移滑入 20px -> 0)
+        const img11Opacity = getInterpolatedValue(progress2, 0.42, 0.54, 0, 1);
+        const img11Y = getInterpolatedValue(progress2, 0.42, 0.54, 20, 0);
+        if (img11) {
+          img11.style.opacity = img11Opacity;
+          img11.style.transform = `translate3d(0, ${img11Y}px, 0)`;
+        }
+
+        // 7. 整個步驟二群組 (包含 13, 12, 10, 14, 9, 11) 一起往上滑移移出 (0.60 ~ 0.85)
+        const groupTranslateY2 = getInterpolatedValue(progress2, 0.60, 0.85, 0, -100);
+        if (imagesGroup2) {
+          imagesGroup2.style.transform = `translate3d(0, ${groupTranslateY2}vh, 0)`;
+        }
+
+        stickyFrame2.style.transform = 'translate3d(0, 0, 0)';
+      }
+
+      isTicking = false;
+    }
+
+    // 使用 requestAnimationFrame 進行滾動物理節流，消除抖動與卡頓
+    function onScroll() {
+      if (!isTicking) {
+        window.requestAnimationFrame(updateScrollEffects);
+        isTicking = true;
+      }
+    }
+
+    // 監聽滾動事件，使用 passive: true 提升行動裝置的滑動響應速度
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('DOMContentLoaded', updateScrollEffects);
+  </script>
 </body>
 </html>
