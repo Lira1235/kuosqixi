@@ -129,15 +129,14 @@ img {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
-/* 【核心修正 1】優化過渡圖七 CSS 初始設定： */
-/* 拋棄容易造成閃動的 display: none，改為初始就在物理位置上被 translate3d 推出視窗外（120vh）並維持 opacity: 0。 */
-/* 這樣當滾動觸發時，它是平滑、自然地由下往上滑入，絕不會在頂端閃現。 */
-.step-sticky-frame .step-item.step-7-container {
-  z-index: 9;
-  align-items: flex-start;
-  opacity: 0;
-  display: flex; /* 保持 flex 佈局，避免 display 切換造成的渲染抖動 */
-  transform: translate3d(0, 120vh, 0); /* 初始推到視窗最下方外 */
+/* 【核心修正 1】極致優化過渡圖七的 CSS 宣告與權重 */
+/* 我們直接鎖定 .step-7 並給予 highest specificity，且初始強制 transform 到 120vh (螢幕下方外) */
+/* 這樣在 JS 還未載入、執行或重設前，它在物理上絕對只會在螢幕最底部的外側，絕不可能在頂端閃現。 */
+.step-sticky-frame .step-item.step-7 {
+  z-index: 9 !important;
+  opacity: 0 !important;
+  transform: translate3d(0, 120vh, 0) !important;
+  display: flex;
   pointer-events: none;
   will-change: transform, opacity;
 }
@@ -185,7 +184,8 @@ img {
       </div>
     </div>
     <!-- 2. 過渡圖七 疊加層（介於一二之間） -->
-    <div class="step-item step-7-container step-7">
+    <!-- 移除多餘樣式類別，僅保留主要控制級別以防樣式衝突 -->
+    <div class="step-item step-7">
       <div class="img-wrapper">
         <img src="工作區域 7.png" decoding="async">
       </div>
@@ -311,23 +311,21 @@ function updateScrollEffects() {
     }
     // -------------------------------------------------------
     // 【核心修正 2】無縫過渡物理運算：
-    // 在 progress < 0.35 時，徹底限制過渡圖七的物理位置在最下方（120vh）且 opacity 為 0。
-    // 當 progress 進入 >= 0.35 時，將其物理滑動位置和透明度緊密與 progress 連動，
-    // 從視窗最下方 (window.innerHeight) 平滑推動並淡入至畫面頂端偏下的物理位置 (window.innerHeight * 0.10)。
+    // 在進度未到 0.35 前，透過 JS 內聯樣式覆寫 CSS 設定。
+    // 使用 setProperty 確保絕對以最快速度把 transform 位移強制在螢幕之外（window.innerHeight），並完全透明。
     // -------------------------------------------------------
     if (progress >= 0.35) {
       const img7Opacity = getInterpolatedValue(progress, 0.35, 0.45, 0, 1);
-      // 從螢幕底部（window.innerHeight）起算，實時流暢地上滑到 10vh
+      // 從螢幕底部（window.innerHeight）起算，實時流暢地由下往上滑到 10vh (頂端偏下物理高度)
       const img7Y = getInterpolatedValue(progress, 0.35, 0.50, window.innerHeight, window.innerHeight * 0.10);
       if (img7) {
-        img7.style.opacity = img7Opacity;
-        img7.style.transform = `translate3d(0, ${img7Y}px, 0)`;
+        img7.style.setProperty('opacity', img7Opacity, 'important');
+        img7.style.setProperty('transform', `translate3d(0, ${img7Y}px, 0)`, 'important');
       }
     } else {
       if (img7) {
-        img7.style.opacity = 0;
-        // 在步驟一尚未滾動完畢前，將其強制錨定在視窗最下方，防止在畫面上方有任何閃現
-        img7.style.transform = `translate3d(0, ${window.innerHeight}px, 0)`;
+        img7.style.setProperty('opacity', '0', 'important');
+        img7.style.setProperty('transform', `translate3d(0, ${window.innerHeight}px, 0)`, 'important');
       }
     }
     // 步驟一同步上移 10vh
@@ -345,8 +343,8 @@ function updateScrollEffects() {
     }
     if (progress >= 0.35 && img7) {
       const finalImg7Y = (window.innerHeight * 0.10) + (pushTranslateY / 100 * window.innerHeight);
-      img7.style.transform = `translate3d(0, ${finalImg7Y}px, 0)`;
-      img7.style.opacity = getInterpolatedValue(progress, 0.58, 0.65, 1, 0);
+      img7.style.setProperty('transform', `translate3d(0, ${finalImg7Y}px, 0)`, 'important');
+      img7.style.setProperty('opacity', getInterpolatedValue(progress, 0.58, 0.65, 1, 0), 'important');
     }
     // 步驟二整體群組「無縫緊貼圖七下方 110vh」，等距實時滑入至 0vh
     if (imagesGroup2) {
