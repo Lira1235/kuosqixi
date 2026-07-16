@@ -90,10 +90,9 @@
     }
 
     /* ========================================== 通用滾動粘性疊加區 CSS ========================================== */
-    /* 整合步驟一、過渡圖與步驟二到同一個大滾動軌道中，實現完美物理聯動 */
     .step-scroll-container {
       position: relative;
-      height: 780vh; /* 增加總軌道長度以容納一體化流暢滾動 */
+      height: 780vh; /* 總滾動高度，控制實時滑動阻尼 */
       width: 100%;
     }
 
@@ -109,7 +108,7 @@
       -webkit-backface-visibility: hidden;
     }
 
-    /* 圖片群組容器，包裹以便集體運動 */
+    /* 圖片群組容器 */
     .step-images-group {
       position: absolute;
       top: 0;
@@ -122,7 +121,7 @@
       -webkit-backface-visibility: hidden;
     }
 
-    /* 步驟一與步驟二群組層級 */
+    /* 確保群組層級遮罩關係正確 */
     .step1-images-group {
       z-index: 10;
     }
@@ -130,7 +129,7 @@
       z-index: 8;
     }
 
-    /* 每一張疊加圖片容器 (硬體加速優化) */
+    /* 每一張疊加圖片容器 */
     .step-item {
       position: absolute;
       top: 0;
@@ -148,11 +147,12 @@
       -webkit-backface-visibility: hidden;
     }
 
-    /* 過渡圖 7 專屬定位：初始在螢幕外，最終滑入至覆蓋步驟一下方 1/6 (約 16.6vh) */
+    /* 過渡圖 7 專屬定位：初始強制不顯示且在螢幕最下方（100vh 之外），完全阻絕載入時的渲染干擾 */
     .step-item.step-7-container {
-      z-index: 9; /* 介於步驟一與步驟二之間 */
+      z-index: 9;
       align-items: flex-start;
       opacity: 0;
+      display: none; /* 初始完全隱藏，不參與載入時的渲染 */
       transform: translate3d(0, 100vh, 0);
       will-change: transform, opacity;
     }
@@ -170,41 +170,44 @@
 </head>
 <body>
 
-  <!-- ─── 一體化滾動疊加區（包含步驟一、過渡圖七、步驟二） ─── -->
+  <!-- ─── 一體化滾動疊加區（步驟一 + 過渡圖 + 步驟二） ─── -->
   <div class="step-scroll-container step-main-container">
-    <!-- 標題放入滾動區頂部，達成原生、零卡頓的物理隨滑上移 -->
+    <!-- 標題放入滾動區頂部 -->
     <div class="title-container">
       <h1>七夕收涎儀式流程</h1>
     </div>
     
     <div class="step-sticky-frame step-main-sticky-frame">
       
-      <!-- 1. 步驟一 1~6 圖片群組 -->
+      <!-- 1. 步驟一 圖片群組 -->
       <div class="step-images-group step1-images-group">
-        <!-- 【階段一：第一次物理顯現】 -->
+        <!-- 3. 工作區域 3 -->
         <div class="step-item step-3" style="z-index: 10;">
           <div class="img-wrapper"><img src="工作區域 3.png" decoding="async"></div>
         </div>
+        <!-- 2. 工作區域 2 -->
         <div class="step-item step-2" style="z-index: 5;">
           <div class="img-wrapper"><img src="工作區域 2.png" decoding="async"></div>
         </div>
-        <!-- 【階段二：下一次物理顯現（5、6 先出）】 -->
+        <!-- 5. 工作區域 5 -->
         <div class="step-item step-5" style="z-index: 9;">
           <div class="img-wrapper"><img src="工作區域 5.png" decoding="async"></div>
         </div>
+        <!-- 6. 工作區域 6 -->
         <div class="step-item step-6" style="z-index: 8;">
           <div class="img-wrapper"><img src="工作區域 6.png" decoding="async"></div>
         </div>
-        <!-- 【階段三：最後物理顯現（1、4 後出）】 -->
+        <!-- 1. 工作區域 1 -->
         <div class="step-item step-1" style="z-index: 7;">
           <div class="img-wrapper"><img src="工作區域 1.png" decoding="async"></div>
         </div>
+        <!-- 4. 工作區域 4 -->
         <div class="step-item step-4" style="z-index: 6;">
           <div class="img-wrapper"><img src="工作區域 4.png" decoding="async"></div>
         </div>
       </div>
 
-      <!-- 2. 過渡圖 7 疊加層（介於一與二之間，精準控制覆蓋） -->
+      <!-- 2. 過渡圖七 疊加層（介於一二之間） -->
       <div class="step-item step-7-container step-7">
         <div class="img-wrapper">
           <img src="工作區域 7.png" decoding="async">
@@ -253,7 +256,6 @@
     <img src="webb.png" decoding="async" loading="lazy">
   </div>
 
-  <!-- 滾動偵測 JavaScript (高效能單軌道、齒輪式物理聯動引擎) -->
   <script>
     // 物理進度線性內插計算
     function getInterpolatedValue(progress, start, end, fromVal, toVal) {
@@ -296,7 +298,7 @@
         progress = Math.max(0, Math.min(1, progress));
 
         // -------------------------------------------------------
-        // 0. 初始標題隨滑動上移（0.00 ~ 0.08，不淡出）
+        // 0. 初始標題上滑（不淡出）
         // -------------------------------------------------------
         if (titleContainer) {
           const titleY = getInterpolatedValue(progress, 0.00, 0.08, 0, -100);
@@ -304,9 +306,8 @@
         }
 
         // -------------------------------------------------------
-        // 1. 步驟一圖片顯現 (progress: 0.03 ~ 0.35)
+        // 1. 步驟一 1~6 圖片依序漸顯 (progress: 0.03 ~ 0.35)
         // -------------------------------------------------------
-        // 階段一：工作區域 3 & 工作區域 2
         const img3Opacity = getInterpolatedValue(progress, 0.03, 0.10, 0, 1);
         const img3Y = getInterpolatedValue(progress, 0.03, 0.10, 40, 0);
         if (img3) {
@@ -321,7 +322,6 @@
           img2.style.transform = `translate3d(0, ${img2Y}px, 0)`;
         }
 
-        // 階段二：工作區域 5 & 工作區域 6
         const img5Opacity = getInterpolatedValue(progress, 0.12, 0.19, 0, 1);
         const img5Y = getInterpolatedValue(progress, 0.12, 0.19, 40, 0);
         if (img5) {
@@ -336,7 +336,6 @@
           img6.style.transform = `translate3d(0, ${img6Y}px, 0)`;
         }
 
-        // 階段三：工作區域 1 & 工作區域 4
         const img1Opacity = getInterpolatedValue(progress, 0.21, 0.29, 0, 1);
         const img1Y = getInterpolatedValue(progress, 0.21, 0.29, 20, 0);
         if (img1) {
@@ -352,15 +351,26 @@
         }
 
         // -------------------------------------------------------
-        // 2. 步驟一完全顯現後，手指上滑，過渡圖七實時上移 (0.35 ~ 0.50)
-        //    * 頂端剛好蓋在步驟一畫面下方 1/6 (即 Y 軸終點停在 16.6vh)
-        //    * 同時步驟一 (Group1) 依照實時比例同步小幅往上滑移 (0vh -> -16.6vh)，達成完美推擠感
+        // 2. 步驟一完全顯現後，手指上滑，帶出過渡圖七與步驟二物理銜接 (0.35 ~ 0.50)
+        //    * 步驟一組 (Group 1) 由 0vh 實時向上推至 -16.6vh 騰出空間。
+        //    * 過渡圖七 (Img 7) 實時從螢幕外滑入，精準覆蓋在步驟一的下方 1/6 位置（定位於 16.6vh）。
         // -------------------------------------------------------
-        const img7Opacity = getInterpolatedValue(progress, 0.35, 0.45, 0, 1);
-        const img7Y = getInterpolatedValue(progress, 0.35, 0.50, window.innerHeight, window.innerHeight * 0.166);
-        if (img7) {
-          img7.style.opacity = img7Opacity;
-          img7.style.transform = `translate3d(0, ${img7Y}px, 0)`;
+        if (progress >= 0.32) {
+          // 當進度快到步驟一結束時，才將圖七設為 flex/block 顯示，完全避免初始載入時被看見
+          if (img7) img7.style.display = 'flex';
+          
+          const img7Opacity = getInterpolatedValue(progress, 0.35, 0.45, 0, 1);
+          const img7Y = getInterpolatedValue(progress, 0.35, 0.50, window.innerHeight, window.innerHeight * 0.166);
+          if (img7) {
+            img7.style.opacity = img7Opacity;
+            img7.style.transform = `translate3d(0, ${img7Y}px, 0)`;
+          }
+        } else {
+          // 初始載入或滾動在 0.32 以前時，圖七完全從 DOM 渲染樹中隱藏
+          if (img7) {
+            img7.style.display = 'none';
+            img7.style.opacity = 0;
+          }
         }
 
         const group1Y = getInterpolatedValue(progress, 0.35, 0.50, 0, -16.6);
@@ -369,8 +379,7 @@
         }
 
         // -------------------------------------------------------
-        // 3. 繼續上滑：步驟一與過渡圖七一同往上推出螢幕，同時帶出緊密連接的步驟二 (0.50 ~ 0.65)
-        //    * 步驟二的起始位置會配合此時的推動，與圖七尾端無縫相連滑入
+        // 3. 繼續上滑：步驟一與圖七向上推出，步驟二「緊隨在過渡圖七下方」滑入 (0.50 ~ 0.65)
         // -------------------------------------------------------
         const pushTranslateY = getInterpolatedValue(progress, 0.50, 0.65, 0, -100);
         
@@ -378,22 +387,22 @@
         if (imagesGroup1) {
           imagesGroup1.style.transform = `translate3d(0, ${group1Y + pushTranslateY}vh, 0)`;
         }
-        if (img7) {
+        if (progress >= 0.32 && img7) {
           const finalImg7Y = (window.innerHeight * 0.166) + (pushTranslateY / 100 * window.innerHeight);
           img7.style.transform = `translate3d(0, ${finalImg7Y}px, 0)`;
           img7.style.opacity = getInterpolatedValue(progress, 0.58, 0.65, 1, 0);
         }
 
-        // 步驟二整體群組從下方滑入
+        // 步驟二整體群組「緊黏在圖七下方 116.6vh」，等距實時滑入至螢幕中央 (0vh)
         if (imagesGroup2) {
-          const group2Y = getInterpolatedValue(progress, 0.50, 0.65, 100, 0);
+          const group2Y = getInterpolatedValue(progress, 0.50, 0.65, 116.6, 0);
           imagesGroup2.style.transform = `translate3d(0, ${group2Y}vh, 0)`;
         }
 
         // -------------------------------------------------------
-        // 4. 步驟二圖片依序在畫面上漸顯與重疊 (0.62 ~ 0.82)
+        // 4. 步驟二圖片依序在同一個畫面上滑入重疊漸顯 (0.62 ~ 0.83)
         // -------------------------------------------------------
-        // 1. 出現 13
+        // 13. 工作區域 13
         const img13Opacity = getInterpolatedValue(progress, 0.63, 0.68, 0, 1);
         const img13Y = getInterpolatedValue(progress, 0.63, 0.68, 40, 0);
         if (img13) {
@@ -401,7 +410,7 @@
           img13.style.transform = `translate3d(0, ${img13Y}px, 0)`;
         }
 
-        // 2. 出現 12
+        // 12. 工作區域 12
         const img12Opacity = getInterpolatedValue(progress, 0.66, 0.71, 0, 1);
         const img12Y = getInterpolatedValue(progress, 0.66, 0.71, 40, 0);
         if (img12) {
@@ -409,7 +418,7 @@
           img12.style.transform = `translate3d(0, ${img12Y}px, 0)`;
         }
 
-        // 3. 出現 10
+        // 10. 工作區域 10
         const img10Opacity = getInterpolatedValue(progress, 0.69, 0.74, 0, 1);
         const img10Y = getInterpolatedValue(progress, 0.69, 0.74, 40, 0);
         if (img10) {
@@ -417,7 +426,7 @@
           img10.style.transform = `translate3d(0, ${img10Y}px, 0)`;
         }
 
-        // 4. 出現 14
+        // 14. 工作區域 14
         const img14Opacity = getInterpolatedValue(progress, 0.72, 0.77, 0, 1);
         const img14Y = getInterpolatedValue(progress, 0.72, 0.77, 40, 0);
         if (img14) {
@@ -425,7 +434,7 @@
           img14.style.transform = `translate3d(0, ${img14Y}px, 0)`;
         }
 
-        // 5. 出現 9
+        // 9. 工作區域 9
         const img9Opacity = getInterpolatedValue(progress, 0.75, 0.80, 0, 1);
         const img9Y = getInterpolatedValue(progress, 0.75, 0.80, 20, 0);
         if (img9) {
@@ -433,7 +442,7 @@
           img9.style.transform = `translate3d(0, ${img9Y}px, 0)`;
         }
 
-        // 6. 出現 11
+        // 11. 工作區域 11
         const img11Opacity = getInterpolatedValue(progress, 0.78, 0.83, 0, 1);
         const img11Y = getInterpolatedValue(progress, 0.78, 0.83, 20, 0);
         if (img11) {
