@@ -118,14 +118,15 @@ img {
   width: 100%;
   height: 100vh;
 }
-/* 【獨立定位跨越交接處的圖片 7 容器】 */
+/* 【物理下移修正點】 */
+/* 調整 translate3d 的 Y 軸負值。原本為 -50vh，現改為 -35vh 讓它物理位置下移 */
 .step-7-wrapper {
   position: absolute;
-  top: 100vh; /* 剛好釘在步驟一底部與步驟二頂部的物理接觸線上 */
+  top: 100vh; /* 釘在步驟一與二的交接線上 */
   left: 0;
   width: 100%;
   height: 100vh;
-  transform: translate3d(0, -50vh, 0); /* 往上偏移半個螢幕高度，使其剛好置中跨越一二步 */
+  transform: translate3d(0, -35vh, 0); /* 若需要再往下，可改成 -30vh 或 -25vh */
   pointer-events: none;
   z-index: 20; /* 確保在最上層，蓋在步驟一、二所有疊加圖片上方 */
 }
@@ -193,7 +194,7 @@ img {
         </div>
       </div>
 
-      <!-- 【全新修正】獨立疊加的圖片 7，透過 position: absolute 與 top: 100vh 完美重疊在交接處最上層 -->
+      <!-- 獨立疊加的圖片 7，透過 absolute 與 top: 100vh 及 transform 的微調，完美下移且不影響原長圖銜接 -->
       <div class="step-7-wrapper">
         <div class="step-item step-7" style="z-index: 20;">
           <div class="img-wrapper">
