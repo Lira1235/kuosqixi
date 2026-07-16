@@ -129,14 +129,13 @@ img {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
-/* 【核心修正 1】極致優化過渡圖七的 CSS 宣告與權重 */
-/* 我們直接鎖定 .step-7 並給予 highest specificity，且初始強制 transform 到 120vh (螢幕下方外) */
-/* 這樣在 JS 還未載入、執行或重設前，它在物理上絕對只會在螢幕最底部的外側，絕不可能在頂端閃現。 */
+/* 【過渡圖專屬樣式】 */
+/* 初始狀態直接完全 display: none + opacity: 0，杜絕載入時的任何提早曝光。 */
 .step-sticky-frame .step-item.step-7 {
   z-index: 9 !important;
   opacity: 0 !important;
-  transform: translate3d(0, 120vh, 0) !important;
-  display: flex;
+  display: none; /* 載入與前段進度完全不渲染 */
+  transform: translate3d(0, 100vh, 0) !important;
   pointer-events: none;
   will-change: transform, opacity;
 }
@@ -184,7 +183,6 @@ img {
       </div>
     </div>
     <!-- 2. 過渡圖七 疊加層（介於一二之間） -->
-    <!-- 移除多餘樣式類別，僅保留主要控制級別以防樣式衝突 -->
     <div class="step-item step-7">
       <div class="img-wrapper">
         <img src="工作區域 7.png" decoding="async">
@@ -264,7 +262,7 @@ function updateScrollEffects() {
     let progress = -rect.top / scrollableHeight;
     progress = Math.max(0, Math.min(1, progress));
     // -------------------------------------------------------
-    // 0. 初始標題上滑（不淡出）
+    // 0. 初始標題上滑
     // -------------------------------------------------------
     if (titleContainer) {
       const titleY = getInterpolatedValue(progress, 0.00, 0.08, 0, -100);
@@ -310,13 +308,21 @@ function updateScrollEffects() {
       img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
     }
     // -------------------------------------------------------
-    // 【核心修正 2】無縫過渡物理運算：
-    // 在進度未到 0.35 前，透過 JS 內聯樣式覆寫 CSS 設定。
-    // 使用 setProperty 確保絕對以最快速度把 transform 位移強制在螢幕之外（window.innerHeight），並完全透明。
+    // 【核心物理修正點】物理排列順序：步驟一 -> 過渡圖七 -> 步驟二
+    // -------------------------------------------------------
+    // 當 progress >= 0.35 時，步驟一的所有元件完全就位。
+    // 此時，過渡圖七（img7）實時「由下往上」滑入。
+    // 為了解決原先它「出現在頂端」的問題，當 progress < 0.35 時，
+    // 我們強制將 img7 設為 display: none，不佔用任何渲染；
+    // 一旦 progress >= 0.35，立刻切換為 display: flex，且初始物理位置（img7Y）
+    // 嚴格地從視窗高度（window.innerHeight）開始往上遞減滑動。
     // -------------------------------------------------------
     if (progress >= 0.35) {
+      if (img7) {
+        img7.style.display = 'flex'; // 進入該進度區間才允許顯示
+      }
       const img7Opacity = getInterpolatedValue(progress, 0.35, 0.45, 0, 1);
-      // 從螢幕底部（window.innerHeight）起算，實時流暢地由下往上滑到 10vh (頂端偏下物理高度)
+      // 從螢幕正下方（window.innerHeight）開始，隨滾動平滑上滑至頂部偏下的 10vh 物理高度
       const img7Y = getInterpolatedValue(progress, 0.35, 0.50, window.innerHeight, window.innerHeight * 0.10);
       if (img7) {
         img7.style.setProperty('opacity', img7Opacity, 'important');
@@ -324,6 +330,7 @@ function updateScrollEffects() {
       }
     } else {
       if (img7) {
+        img7.style.display = 'none'; // 徹底隱藏，杜絕在頂端有任何閃動或曝光的機會
         img7.style.setProperty('opacity', '0', 'important');
         img7.style.setProperty('transform', `translate3d(0, ${window.innerHeight}px, 0)`, 'important');
       }
