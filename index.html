@@ -381,16 +381,17 @@ function updateScrollEffects() {
       img14.style.opacity = img14Opacity;
       img14.style.transform = `translate3d(0, ${img14Y}px, 0)`;
     }
+    // ───【核心修正點】工作區域 9 與 11 改為完全同步出現 (進度區間設定為 0.60 ~ 0.72) ───
     // 9. 工作區域 9
-    const img9Opacity = getInterpolatedValue(progress, 0.60, 0.70, 0, 1);
-    const img9Y = getInterpolatedValue(progress, 0.60, 0.70, 20, 0);
+    const img9Opacity = getInterpolatedValue(progress, 0.60, 0.72, 0, 1);
+    const img9Y = getInterpolatedValue(progress, 0.60, 0.72, 20, 0);
     if (img9) {
       img9.style.opacity = img9Opacity;
       img9.style.transform = `translate3d(0, ${img9Y}px, 0)`;
     }
     // 11. 工作區域 11
-    const img11Opacity = getInterpolatedValue(progress, 0.66, 0.78, 0, 1);
-    const img11Y = getInterpolatedValue(progress, 0.66, 0.78, 20, 0);
+    const img11Opacity = getInterpolatedValue(progress, 0.60, 0.72, 0, 1);
+    const img11Y = getInterpolatedValue(progress, 0.60, 0.72, 20, 0);
     if (img11) {
       img11.style.opacity = img11Opacity;
       img11.style.transform = `translate3d(0, ${img11Y}px, 0)`;
