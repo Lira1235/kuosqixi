@@ -96,10 +96,10 @@
       width: 100%;
     }
 
-    /* 調整：縮小過渡圖專用滾動軌道高度 (從 200vh 縮小至 130vh) 以拉近銜接距離 */
+    /* 縮短過渡軌道高度（110vh），實現手指上滑一次便能立刻銜接進出 */
     .step7-scroll-container {
       position: relative;
-      height: 130vh; 
+      height: 110vh; 
       width: 100%;
     }
 
@@ -147,11 +147,11 @@
       -webkit-backface-visibility: hidden;
     }
 
-    /* 讓過渡圖 7 預設置於視窗最下方(100vh)準備由下往上滑入 */
+    /* 調整過渡圖 7 的預設位置，初始僅向下微幅偏移 80px，不再從最底部 100vh 推上來 */
     .step-item.step-7-container {
-      align-items: flex-start; /* 頂部對齊以利圖片完整呈現 */
+      align-items: flex-start;
       opacity: 0;
-      transform: translate3d(0, 100vh, 0);
+      transform: translate3d(0, 80px, 0);
       will-change: transform, opacity;
     }
 
@@ -310,6 +310,7 @@
       const container1 = document.querySelector('.step1-scroll-container');
       const stickyFrame1 = document.querySelector('.step1-sticky-frame');
       const imagesGroup1 = document.querySelector('.step1-images-group');
+      const titleContainer = document.querySelector('.title-container');
       const img3 = document.querySelector('.step-3');
       const img2 = document.querySelector('.step-2');
       const img5 = document.querySelector('.step-5');
@@ -322,6 +323,12 @@
         const scrollableHeight1 = rect1.height - window.innerHeight;
         let progress1 = -rect1.top / scrollableHeight1;
         progress1 = Math.max(0, Math.min(1, progress1));
+
+        // 1. 初始標題隨滑動上移：只根據 progress1 物理上滑，不修改任何不透明度（保持原載入效果，不淡出）
+        if (titleContainer) {
+          const titleY = getInterpolatedValue(progress1, 0.00, 0.15, 0, -100);
+          titleContainer.style.transform = `translate3d(0, ${titleY}vh, 0)`;
+        }
 
         // 階段一：工作區域 3 & 工作區域 2
         const img3Opacity = getInterpolatedValue(progress1, 0.05, 0.15, 0, 1);
@@ -368,7 +375,7 @@
           img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
         }
 
-        // 階段四：步驟一整組向上滑移移出
+        // 階段四：步驟一整組隨著進度物理往上移出 (0.60 ~ 0.90)
         const groupTranslateY = getInterpolatedValue(progress1, 0.60, 0.90, 0, -100);
         if (imagesGroup1) {
           imagesGroup1.style.transform = `translate3d(0, ${groupTranslateY}vh, 0)`;
@@ -378,7 +385,7 @@
       }
 
       // =======================================================
-      // 【獨立過渡軌道 (圖 7)】── 物理滑動控制與優化進度
+      // 【獨立過渡軌道 (圖 7)】
       // =======================================================
       const container7 = document.querySelector('.step7-scroll-container');
       const stickyFrame7 = document.querySelector('.step7-sticky-frame');
@@ -390,9 +397,11 @@
         let progress7 = -rect7.top / scrollableHeight7;
         progress7 = Math.max(0, Math.min(1, progress7));
 
-        // 1. 圖 7 由下往上物理滑入，並將滑入終點提前 (0.00 ~ 0.40) 騰出更多停留空間
-        const img7OpacityIn = getInterpolatedValue(progress7, 0.00, 0.35, 0, 1);
-        const img7YIn = getInterpolatedValue(progress7, 0.00, 0.40, window.innerHeight, 0);
+        // 1. 物理齒輪式聯動：
+        // 當 progress7 在 0.00 ~ 0.35 時，圖 7 會從 Y: 80px 微幅上移到 0px 並且 opacity 變為 1
+        // 此時，因為步驟一的 container1 已經往上移出視區，兩者在滾動交界處達成了最緊湊、無縫的物理等距移動！
+        const img7OpacityIn = getInterpolatedValue(progress7, 0.00, 0.30, 0, 1);
+        const img7YIn = getInterpolatedValue(progress7, 0.00, 0.35, 80, 0);
 
         if (progress7 < 0.45) {
           if (img7) {
@@ -400,7 +409,7 @@
             img7.style.transform = `translate3d(0, ${img7YIn}px, 0)`;
           }
         } else {
-          // 2. 圖 7 在滑入後更早開始物理往上滑出 (-100vh) (0.45 ~ 0.85)，使步驟二能更快接上
+          // 2. 停留之後，配合手指滑動往上滑出視區 (-100vh) (0.45 ~ 0.85)
           const img7OpacityOut = getInterpolatedValue(progress7, 0.45, 0.80, 1, 0);
           const img7YOut = getInterpolatedValue(progress7, 0.45, 0.85, 0, -100);
           if (img7) {
