@@ -96,6 +96,13 @@
       width: 100%;
     }
 
+    /* 過渡圖專用較短的滾動軌道 */
+    .step7-scroll-container {
+      position: relative;
+      height: 200vh;
+      width: 100%;
+    }
+
     .step-sticky-frame {
       position: sticky;
       top: 0;
@@ -140,9 +147,10 @@
       -webkit-backface-visibility: hidden;
     }
 
-    /* 專門讓過渡圖 7 初始置於視窗最下方，與步驟一產生交疊並方便由下往上滑入 */
+    /* 修改：讓過渡圖 7 預設置於視窗最下方(100vh)準備由下往上滑入 */
     .step-item.step-7-container {
-      align-items: flex-end; /* 對齊底部 */
+      align-items: flex-start; /* 改為頂部對齊以利圖片完整呈現 */
+      opacity: 0;
       transform: translate3d(0, 100vh, 0);
       will-change: transform, opacity;
     }
@@ -209,8 +217,13 @@
           </div>
         </div>
       </div>
-      <!-- 【階段四：過渡圖 7 獨立放置於 step-sticky-frame 中】 -->
-      <div class="step-item step-7-container step-7" style="z-index: 2;">
+    </div>
+  </div>
+
+  <!-- ─── 獨立過渡圖 7 滾動區 (精準插入於步驟一、二之間) ─── -->
+  <div class="step7-scroll-container">
+    <div class="step-sticky-frame step7-sticky-frame">
+      <div class="step-item step-7-container step-7" style="z-index: 12;">
         <div class="img-wrapper">
           <img src="工作區域 7.png" decoding="async">
         </div>
@@ -221,7 +234,7 @@
   <!-- ─── 步驟二：獨立滾動疊加區 ─── -->
   <div class="step-scroll-container step2-scroll-container">
     <div class="step-sticky-frame step2-sticky-frame">
-      <!-- 步驟二 圖片群組 (將 9 與 11 放進群組內與 10,12,13,14 一同重疊滑動) -->
+      <!-- 步驟二 圖片群組 -->
       <div class="step-images-group step2-images-group">
         <!-- 【階段一：13 先出現】 -->
         <div class="step-item step-13" style="z-index: 14;">
@@ -247,7 +260,7 @@
             <img src="工作區域 14.png" decoding="async">
           </div>
         </div>
-        <!-- 【階段五：過渡同步圖 9 與 11 (已移入群組，與上述圖片完美重疊)】 -->
+        <!-- 【階段五：過渡同步圖 9 與 11】 -->
         <div class="step-item step-11" style="z-index: 13;">
           <div class="img-wrapper">
             <img src="工作區域 11.png" decoding="async">
@@ -279,7 +292,7 @@
     <img src="webb.png" decoding="async" loading="lazy">
   </div>
 
-  <!-- 滾動偵測 JavaScript (高效能雙滾動軌道硬體加速引擎) -->
+  <!-- 滾動偵測 JavaScript (高效能多滾動軌道硬體加速引擎) -->
   <script>
     // 物理進度線性內插計算
     function getInterpolatedValue(progress, start, end, fromVal, toVal) {
@@ -303,7 +316,6 @@
       const img6 = document.querySelector('.step-6');
       const img1 = document.querySelector('.step-1');
       const img4 = document.querySelector('.step-4');
-      const img7 = document.querySelector('.step-7');
 
       if (container1 && stickyFrame1) {
         const rect1 = container1.getBoundingClientRect();
@@ -356,35 +368,52 @@
           img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
         }
 
-        // 階段四：步驟一（1~6）上移，同時帶出下方的過渡圖 7
-        const groupTranslateY = getInterpolatedValue(progress1, 0.55, 0.82, 0, -100);
+        // 階段四：步驟一整組向上滑移移出
+        const groupTranslateY = getInterpolatedValue(progress1, 0.60, 0.90, 0, -100);
         if (imagesGroup1) {
           imagesGroup1.style.transform = `translate3d(0, ${groupTranslateY}vh, 0)`;
-        }
-
-        // 過渡圖 7 從最下方（100vh）被向上帶出
-        const img7Opacity = getInterpolatedValue(progress1, 0.55, 0.78, 0, 1);
-        let img7Y = getInterpolatedValue(progress1, 0.55, 0.82, window.innerHeight, 0);
-
-        // 階段五：滾動快結束時（> 0.85），過渡圖 7 繼續往上滑動移出視窗
-        if (progress1 >= 0.85) {
-          const finalY = getInterpolatedValue(progress1, 0.85, 1.00, 0, -100);
-          if (img7) {
-            img7.style.opacity = getInterpolatedValue(progress1, 0.85, 1.00, 1, 0);
-            img7.style.transform = `translate3d(0, ${finalY}vh, 0)`;
-          }
-        } else {
-          if (img7) {
-            img7.style.opacity = img7Opacity;
-            img7.style.transform = `translate3d(0, ${img7Y}px, 0)`;
-          }
         }
 
         stickyFrame1.style.transform = 'translate3d(0, 0, 0)';
       }
 
       // =======================================================
-      // 【步驟二滾動控制軌道】── 修改後：漸顯微幅滑入與頂部重疊邏輯
+      // 【獨立過渡軌道 (圖 7)】── 從視區最下方物理滑入並滑出
+      // =======================================================
+      const container7 = document.querySelector('.step7-scroll-container');
+      const stickyFrame7 = document.querySelector('.step7-sticky-frame');
+      const img7 = document.querySelector('.step-7');
+
+      if (container7 && stickyFrame7) {
+        const rect7 = container7.getBoundingClientRect();
+        const scrollableHeight7 = rect7.height - window.innerHeight;
+        let progress7 = -rect7.top / scrollableHeight7;
+        progress7 = Math.max(0, Math.min(1, progress7));
+
+        // 1. 圖 7 從最底(100vh)往上物理滑入 (0.00 ~ 0.50)
+        const img7OpacityIn = getInterpolatedValue(progress7, 0.00, 0.45, 0, 1);
+        const img7YIn = getInterpolatedValue(progress7, 0.00, 0.50, window.innerHeight, 0);
+
+        if (progress7 < 0.55) {
+          if (img7) {
+            img7.style.opacity = img7OpacityIn;
+            img7.style.transform = `translate3d(0, ${img7YIn}px, 0)`;
+          }
+        } else {
+          // 2. 圖 7 停留後，物理往上滑出視窗 (-100vh) (0.55 ~ 0.95)
+          const img7OpacityOut = getInterpolatedValue(progress7, 0.55, 0.90, 1, 0);
+          const img7YOut = getInterpolatedValue(progress7, 0.55, 0.95, 0, -100);
+          if (img7) {
+            img7.style.opacity = img7OpacityOut;
+            img7.style.transform = `translate3d(0, ${img7YOut}vh, 0)`;
+          }
+        }
+
+        stickyFrame7.style.transform = 'translate3d(0, 0, 0)';
+      }
+
+      // =======================================================
+      // 【步驟二滾動控制軌道】── 漸顯微幅滑入與頂部重疊邏輯
       // =======================================================
       const container2 = document.querySelector('.step2-scroll-container');
       const stickyFrame2 = document.querySelector('.step2-sticky-frame');
@@ -402,7 +431,7 @@
         let progress2 = -rect2.top / scrollableHeight2;
         progress2 = Math.max(0, Math.min(1, progress2));
 
-        // 1. 出現 13 (從頂部微幅 Y 軸上滑 40px -> 0，比照步驟一)
+        // 1. 出現 13 (從頂部微幅 Y 軸上滑 40px -> 0)
         const img13Opacity = getInterpolatedValue(progress2, 0.05, 0.15, 0, 1);
         const img13Y = getInterpolatedValue(progress2, 0.05, 0.15, 40, 0);
         if (img13) {
