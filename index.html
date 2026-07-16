@@ -98,7 +98,6 @@ img {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
-/* 【物理長圖核心修正 1】 */
 /* 建立一個總長度為 200vh 的長條畫布包裝容器，步驟一與步驟二上下物理緊密排列 */
 .long-canvas {
   position: absolute;
@@ -151,7 +150,7 @@ img {
     <h1>七夕收涎儀式流程</h1>
   </div>
   <div class="step-sticky-frame step-main-sticky-frame">
-    <!-- 【物理長圖核心修正 2】將兩組圖片放入同一個長條包裝中 -->
+    <!-- 將兩組圖片放入同一個長條包裝中 -->
     <div class="long-canvas">
       
       <!-- 1. 步驟一 圖片群組 (長條上半部) -->
@@ -264,6 +263,8 @@ function updateScrollEffects() {
     }
     // -------------------------------------------------------
     // 1. 步驟一 1~6 圖片依序漸顯 (progress: 0.03 ~ 0.35)
+    // ──【關鍵修正】確保步驟一的圖片在 progress >= 0.35 時，
+    // 依然 100% 保持在畫面上 (Opacity=1, Y=0)，不因公式邊界提早被抹除 ──
     // -------------------------------------------------------
     const img3Opacity = getInterpolatedValue(progress, 0.03, 0.10, 0, 1);
     const img3Y = getInterpolatedValue(progress, 0.03, 0.10, 40, 0);
@@ -302,12 +303,16 @@ function updateScrollEffects() {
       img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
     }
     // -------------------------------------------------------
-    // 2. 【核心物理修正 3】長條圖滾動推進 (progress: 0.35 ~ 0.52)
-    // 我們不單獨移動各別容器，而是直接把長條畫布 .long-canvas 向上移動 -100vh。
-    // 這樣步驟一和步驟二就會像「單一長條圖」一樣無縫滑動，消滅任何空間與時間差造成的空白。
+    // 2. 長條圖滾動推進 (progress: 0.35 ~ 0.52)
+    // 透過直接將 longCanvas 向上平移 -100vh，將步驟一推走，並無縫把緊跟在下方的步驟二帶上來。
     // -------------------------------------------------------
+    let canvasY = 0;
+    if (progress >= 0.35 && progress <= 0.84) {
+      canvasY = getInterpolatedValue(progress, 0.35, 0.52, 0, -100);
+    } else if (progress > 0.84) {
+      canvasY = getInterpolatedValue(progress, 0.84, 0.98, -100, -200);
+    }
     if (longCanvas) {
-      const canvasY = getInterpolatedValue(progress, 0.35, 0.52, 0, -100);
       longCanvas.style.transform = `translate3d(0, ${canvasY}vh, 0)`;
     }
     // -------------------------------------------------------
@@ -356,14 +361,7 @@ function updateScrollEffects() {
       img11.style.opacity = img11Opacity;
       img11.style.transform = `translate3d(0, ${img11Y}px, 0)`;
     }
-    // -------------------------------------------------------
-    // 4. 整個長條圖畫布繼續上移滑出視窗，完美無縫銜接下方的步驟三 (progress: 0.84 ~ 0.98)
-    // 透過直接將 longCanvas 位移從 -100vh 繼續往上推進至 -200vh
-    // -------------------------------------------------------
-    const finalCanvasY = getInterpolatedValue(progress, 0.84, 0.98, -100, -200);
-    if (longCanvas) {
-      longCanvas.style.transform = `translate3d(0, ${finalCanvasY}vh, 0)`;
-    }
+
     stickyFrame.style.transform = 'translate3d(0, 0, 0)';
   }
   isTicking = false;
