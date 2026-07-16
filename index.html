@@ -351,35 +351,36 @@
         }
 
         // -------------------------------------------------------
-        // 2. 步驟一完全顯現後，手指上滑，帶出過渡圖七與步驟二物理銜接 (0.35 ~ 0.50)
-        //    * 步驟一組 (Group 1) 由 0vh 實時向上推至 -16.6vh 騰出空間。
-        //    * 過渡圖七 (Img 7) 實時從螢幕外滑入，精準覆蓋在步驟一的下方 1/6 位置（定位於 16.6vh）。
+        // 2. 嚴格順序：步驟一完全顯現（>0.35）後，手指繼續上滑，過渡圖七才實時滑入
+        //    * 頂端剛好覆蓋步驟一畫面下方 1/10 位置（Y 軸終點停在 10vh / 即 10%）
+        //    * 步驟一組（Group 1）同步向上滑移 10%（0vh -> -10vh）騰出覆蓋空間
         // -------------------------------------------------------
-        if (progress >= 0.32) {
-          // 當進度快到步驟一結束時，才將圖七設為 flex/block 顯示，完全避免初始載入時被看見
+        if (progress >= 0.35) {
           if (img7) img7.style.display = 'flex';
           
           const img7Opacity = getInterpolatedValue(progress, 0.35, 0.45, 0, 1);
-          const img7Y = getInterpolatedValue(progress, 0.35, 0.50, window.innerHeight, window.innerHeight * 0.166);
+          // 從螢幕正下方 100vh 實時上移，停在 10vh (覆蓋下方十分之一)
+          const img7Y = getInterpolatedValue(progress, 0.35, 0.50, window.innerHeight, window.innerHeight * 0.10);
           if (img7) {
             img7.style.opacity = img7Opacity;
             img7.style.transform = `translate3d(0, ${img7Y}px, 0)`;
           }
         } else {
-          // 初始載入或滾動在 0.32 以前時，圖七完全從 DOM 渲染樹中隱藏
           if (img7) {
             img7.style.display = 'none';
             img7.style.opacity = 0;
           }
         }
 
-        const group1Y = getInterpolatedValue(progress, 0.35, 0.50, 0, -16.6);
+        // 步驟一同步上移 10vh
+        const group1Y = getInterpolatedValue(progress, 0.35, 0.50, 0, -10);
         if (imagesGroup1) {
           imagesGroup1.style.transform = `translate3d(0, ${group1Y}vh, 0)`;
         }
 
         // -------------------------------------------------------
-        // 3. 繼續上滑：步驟一與圖七向上推出，步驟二「緊隨在過渡圖七下方」滑入 (0.50 ~ 0.65)
+        // 3. 繼續上滑：步驟一與過渡圖七實時推出，步驟二「緊緊連接在過渡圖七下方」實時滑入 (0.50 ~ 0.65)
+        //    * 步驟二的起始滑動點定位在 110vh (圖七底部 10vh + 100vh 螢幕高度)，實時滑移到 0vh
         // -------------------------------------------------------
         const pushTranslateY = getInterpolatedValue(progress, 0.50, 0.65, 0, -100);
         
@@ -387,15 +388,15 @@
         if (imagesGroup1) {
           imagesGroup1.style.transform = `translate3d(0, ${group1Y + pushTranslateY}vh, 0)`;
         }
-        if (progress >= 0.32 && img7) {
-          const finalImg7Y = (window.innerHeight * 0.166) + (pushTranslateY / 100 * window.innerHeight);
+        if (progress >= 0.35 && img7) {
+          const finalImg7Y = (window.innerHeight * 0.10) + (pushTranslateY / 100 * window.innerHeight);
           img7.style.transform = `translate3d(0, ${finalImg7Y}px, 0)`;
           img7.style.opacity = getInterpolatedValue(progress, 0.58, 0.65, 1, 0);
         }
 
-        // 步驟二整體群組「緊黏在圖七下方 116.6vh」，等距實時滑入至螢幕中央 (0vh)
+        // 步驟二整體群組「無縫緊貼圖七下方 110vh」，等距實時滑入至 0vh
         if (imagesGroup2) {
-          const group2Y = getInterpolatedValue(progress, 0.50, 0.65, 116.6, 0);
+          const group2Y = getInterpolatedValue(progress, 0.50, 0.65, 110, 0);
           imagesGroup2.style.transform = `translate3d(0, ${group2Y}vh, 0)`;
         }
 
