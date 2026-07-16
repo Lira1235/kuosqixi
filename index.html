@@ -83,7 +83,7 @@ img {
 /* ========================================== 通用滾動粘性疊加區 CSS ========================================== */
 .step-scroll-container {
   position: relative;
-  height: 700vh; /* 回復原本的 700vh 滾動節奏，維持優良手感 */
+  height: 700vh; /* 保持流暢的滾動節奏與物理手感 */
   width: 100%;
 }
 .step-sticky-frame {
@@ -119,14 +119,14 @@ img {
   height: 100vh;
 }
 /* 【物理下移修正點】 */
-/* 調整 translate3d 的 Y 軸負值。原本為 -50vh，現改為 -35vh 讓它物理位置下移 */
+/* 調整 translate3d 的 Y 軸負值。將原先的 -35vh 微調為 -20vh，使圖片 7 更靠近下方。 */
 .step-7-wrapper {
   position: absolute;
   top: 100vh; /* 釘在步驟一與二的交接線上 */
   left: 0;
   width: 100%;
   height: 100vh;
-  transform: translate3d(0, -35vh, 0); /* 若需要再往下，可改成 -30vh 或 -25vh */
+  transform: translate3d(0, -20vh, 0); /* 若需要再往下移，可改成 -10vh、0vh 或微幅正值如 5vh */
   pointer-events: none;
   z-index: 20; /* 確保在最上層，蓋在步驟一、二所有疊加圖片上方 */
 }
@@ -194,7 +194,7 @@ img {
         </div>
       </div>
 
-      <!-- 獨立疊加的圖片 7，透過 absolute 與 top: 100vh 及 transform 的微調，完美下移且不影響原長圖銜接 -->
+      <!-- 獨立疊加的圖片 7，透過 absolute 與 top: 100vh 及 transform 的物理位置微調，完美下移且不影響原長圖銜接 -->
       <div class="step-7-wrapper">
         <div class="step-item step-7" style="z-index: 20;">
           <div class="img-wrapper">
@@ -381,16 +381,17 @@ function updateScrollEffects() {
       img14.style.opacity = img14Opacity;
       img14.style.transform = `translate3d(0, ${img14Y}px, 0)`;
     }
+    // 【核心同步修正】9、11 出現時間與物理位移完全同步 (進度：0.60 ~ 0.72)
     // 9. 工作區域 9
-    const img9Opacity = getInterpolatedValue(progress, 0.60, 0.70, 0, 1);
-    const img9Y = getInterpolatedValue(progress, 0.60, 0.70, 20, 0);
+    const img9Opacity = getInterpolatedValue(progress, 0.60, 0.72, 0, 1);
+    const img9Y = getInterpolatedValue(progress, 0.60, 0.72, 20, 0);
     if (img9) {
       img9.style.opacity = img9Opacity;
       img9.style.transform = `translate3d(0, ${img9Y}px, 0)`;
     }
     // 11. 工作區域 11
-    const img11Opacity = getInterpolatedValue(progress, 0.66, 0.78, 0, 1);
-    const img11Y = getInterpolatedValue(progress, 0.66, 0.78, 20, 0);
+    const img11Opacity = getInterpolatedValue(progress, 0.60, 0.72, 0, 1);
+    const img11Y = getInterpolatedValue(progress, 0.60, 0.72, 20, 0);
     if (img11) {
       img11.style.opacity = img11Opacity;
       img11.style.transform = `translate3d(0, ${img11Y}px, 0)`;
