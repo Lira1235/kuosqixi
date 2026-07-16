@@ -92,26 +92,32 @@ img {
   height: 100vh;
   height: 100dvh;
   width: 100%;
+  overflow: hidden; /* 確保長條圖在視窗外不會露出滾動條 */
   will-change: transform;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
-/* 圖片群組容器 */
-.step-images-group {
+/* 【物理長圖核心修正 1】 */
+/* 建立一個總長度為 200vh 的長條畫布包裝容器，步驟一與步驟二上下物理緊密排列 */
+.long-canvas {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 200vh; /* 兩倍高度：上方為步驟一，下方為步驟二 */
+  display: flex;
+  flex-direction: column; /* 垂直排列 */
   will-change: transform;
   transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
-/* 確保群組層級關係正確 */
-.step1-images-group { z-index: 10; }
-.step2-images-group { z-index: 8; }
+/* 長條圖上下兩大段落，各佔 100vh 高度 */
+.step1-images-group,
+.step2-images-group {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
 /* 每一張疊加圖片容器 */
 .step-item {
   position: absolute;
@@ -145,54 +151,59 @@ img {
     <h1>七夕收涎儀式流程</h1>
   </div>
   <div class="step-sticky-frame step-main-sticky-frame">
-    <!-- 1. 步驟一 圖片群組 -->
-    <div class="step-images-group step1-images-group">
-      <!-- 3. 工作區域 3 -->
-      <div class="step-item step-3" style="z-index: 10;">
-        <div class="img-wrapper"><img src="工作區域 3.png" decoding="async"></div>
+    <!-- 【物理長圖核心修正 2】將兩組圖片放入同一個長條包裝中 -->
+    <div class="long-canvas">
+      
+      <!-- 1. 步驟一 圖片群組 (長條上半部) -->
+      <div class="step-images-group step1-images-group">
+        <!-- 3. 工作區域 3 -->
+        <div class="step-item step-3" style="z-index: 10;">
+          <div class="img-wrapper"><img src="工作區域 3.png" decoding="async"></div>
+        </div>
+        <!-- 2. 工作區域 2 -->
+        <div class="step-item step-2" style="z-index: 5;">
+          <div class="img-wrapper"><img src="工作區域 2.png" decoding="async"></div>
+        </div>
+        <!-- 5. 工作區域 5 -->
+        <div class="step-item step-5" style="z-index: 9;">
+          <div class="img-wrapper"><img src="工作區域 5.png" decoding="async"></div>
+        </div>
+        <!-- 6. 工作區域 6 -->
+        <div class="step-item step-6" style="z-index: 8;">
+          <div class="img-wrapper"><img src="工作區域 6.png" decoding="async"></div>
+        </div>
+        <!-- 1. 工作區域 1 -->
+        <div class="step-item step-1" style="z-index: 7;">
+          <div class="img-wrapper"><img src="工作區域 1.png" decoding="async"></div>
+        </div>
+        <!-- 4. 工作區域 4 -->
+        <div class="step-item step-4" style="z-index: 6;">
+          <div class="img-wrapper"><img src="工作區域 4.png" decoding="async"></div>
+        </div>
       </div>
-      <!-- 2. 工作區域 2 -->
-      <div class="step-item step-2" style="z-index: 5;">
-        <div class="img-wrapper"><img src="工作區域 2.png" decoding="async"></div>
-      </div>
-      <!-- 5. 工作區域 5 -->
-      <div class="step-item step-5" style="z-index: 9;">
-        <div class="img-wrapper"><img src="工作區域 5.png" decoding="async"></div>
-      </div>
-      <!-- 6. 工作區域 6 -->
-      <div class="step-item step-6" style="z-index: 8;">
-        <div class="img-wrapper"><img src="工作區域 6.png" decoding="async"></div>
-      </div>
-      <!-- 1. 工作區域 1 -->
-      <div class="step-item step-1" style="z-index: 7;">
-        <div class="img-wrapper"><img src="工作區域 1.png" decoding="async"></div>
-      </div>
-      <!-- 4. 工作區域 4 -->
-      <div class="step-item step-4" style="z-index: 6;">
-        <div class="img-wrapper"><img src="工作區域 4.png" decoding="async"></div>
-      </div>
-    </div>
 
-    <!-- 2. 步驟二 圖片群組 -->
-    <div class="step-images-group step2-images-group">
-      <div class="step-item step-13" style="z-index: 14;">
-        <div class="img-wrapper"><img src="工作區域 13.png" decoding="async"></div>
+      <!-- 2. 步驟二 圖片群組 (長條下半部，完全緊隨在步驟一正下方，完美貼合) -->
+      <div class="step-images-group step2-images-group">
+        <div class="step-item step-13" style="z-index: 14;">
+          <div class="img-wrapper"><img src="工作區域 13.png" decoding="async"></div>
+        </div>
+        <div class="step-item step-12" style="z-index: 15;">
+          <div class="img-wrapper"><img src="工作區域 12.png" decoding="async"></div>
+        </div>
+        <div class="step-item step-10" style="z-index: 12;">
+          <div class="img-wrapper"><img src="工作區域 10.png" decoding="async"></div>
+        </div>
+        <div class="step-item step-14" style="z-index: 11;">
+          <div class="img-wrapper"><img src="工作區域 14.png" decoding="async"></div>
+        </div>
+        <div class="step-item step-11" style="z-index: 13;">
+          <div class="img-wrapper"><img src="工作區域 11.png" decoding="async"></div>
+        </div>
+        <div class="step-item step-9" style="z-index: 10;">
+          <div class="img-wrapper"><img src="工作區域 9.png" decoding="async"></div>
+        </div>
       </div>
-      <div class="step-item step-12" style="z-index: 15;">
-        <div class="img-wrapper"><img src="工作區域 12.png" decoding="async"></div>
-      </div>
-      <div class="step-item step-10" style="z-index: 12;">
-        <div class="img-wrapper"><img src="工作區域 10.png" decoding="async"></div>
-      </div>
-      <div class="step-item step-14" style="z-index: 11;">
-        <div class="img-wrapper"><img src="工作區域 14.png" decoding="async"></div>
-      </div>
-      <div class="step-item step-11" style="z-index: 13;">
-        <div class="img-wrapper"><img src="工作區域 11.png" decoding="async"></div>
-      </div>
-      <div class="step-item step-9" style="z-index: 10;">
-        <div class="img-wrapper"><img src="工作區域 9.png" decoding="async"></div>
-      </div>
+
     </div>
   </div>
 </div>
@@ -224,8 +235,7 @@ function updateScrollEffects() {
   const container = document.querySelector('.step-main-container');
   const stickyFrame = document.querySelector('.step-main-sticky-frame');
   const titleContainer = document.querySelector('.title-container');
-  const imagesGroup1 = document.querySelector('.step1-images-group');
-  const imagesGroup2 = document.querySelector('.step2-images-group');
+  const longCanvas = document.querySelector('.long-canvas');
   // 步驟一圖片
   const img3 = document.querySelector('.step-3');
   const img2 = document.querySelector('.step-2');
@@ -292,24 +302,19 @@ function updateScrollEffects() {
       img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
     }
     // -------------------------------------------------------
-    // 2. 步驟一整體向上滑出，步驟二整體實時滑入 (progress: 0.35 ~ 0.52)
-    // ── 縮緊銜接進度點，讓轉換更流暢 ──
+    // 2. 【核心物理修正 3】長條圖滾動推進 (progress: 0.35 ~ 0.52)
+    // 我們不單獨移動各別容器，而是直接把長條畫布 .long-canvas 向上移動 -100vh。
+    // 這樣步驟一和步驟二就會像「單一長條圖」一樣無縫滑動，消滅任何空間與時間差造成的空白。
     // -------------------------------------------------------
-    const pushTranslateY = getInterpolatedValue(progress, 0.35, 0.52, 0, -100);
-    // 步驟一整體群組被向上推出視窗
-    if (imagesGroup1) {
-      imagesGroup1.style.transform = `translate3d(0, ${pushTranslateY}vh, 0)`;
-    }
-    // 步驟二整體群組緊貼在步驟一下方 (100vh 外)，無縫實時滑入至螢幕正中 (0vh)
-    if (imagesGroup2) {
-      const group2Y = getInterpolatedValue(progress, 0.35, 0.52, 100, 0);
-      imagesGroup2.style.transform = `translate3d(0, ${group2Y}vh, 0)`;
+    if (longCanvas) {
+      const canvasY = getInterpolatedValue(progress, 0.35, 0.52, 0, -100);
+      longCanvas.style.transform = `translate3d(0, ${canvasY}vh, 0)`;
     }
     // -------------------------------------------------------
     // 3. 步驟二圖片依序漸顯疊加 (progress: 0.35 ~ 0.78)
-    // ──【關鍵修正】讓步驟二的圖片在「群組滑入時」就同步開始漸顯，消滅空白屏 ──
+    // ── 讓步驟二圖片在長圖推上來時就同步開始漸顯，杜絕空白 ──
     // -------------------------------------------------------
-    // 13. 工作區域 13 (與群組滑入完全同步，一滑上來就是亮著的)
+    // 13. 工作區域 13 (與長圖滑入完全同步，一滑上來就是亮著的)
     const img13Opacity = getInterpolatedValue(progress, 0.35, 0.46, 0, 1);
     const img13Y = getInterpolatedValue(progress, 0.35, 0.46, 40, 0);
     if (img13) {
@@ -352,11 +357,12 @@ function updateScrollEffects() {
       img11.style.transform = `translate3d(0, ${img11Y}px, 0)`;
     }
     // -------------------------------------------------------
-    // 4. 步驟二整體上移滑出視窗，無縫銜接下方的步驟三 (progress: 0.84 ~ 0.98)
+    // 4. 整個長條圖畫布繼續上移滑出視窗，完美無縫銜接下方的步驟三 (progress: 0.84 ~ 0.98)
+    // 透過直接將 longCanvas 位移從 -100vh 繼續往上推進至 -200vh
     // -------------------------------------------------------
-    const finalGroup2Y = getInterpolatedValue(progress, 0.84, 0.98, 0, -100);
-    if (imagesGroup2) {
-      imagesGroup2.style.transform = `translate3d(0, ${finalGroup2Y}vh, 0)`;
+    const finalCanvasY = getInterpolatedValue(progress, 0.84, 0.98, -100, -200);
+    if (longCanvas) {
+      longCanvas.style.transform = `translate3d(0, ${finalCanvasY}vh, 0)`;
     }
     stickyFrame.style.transform = 'translate3d(0, 0, 0)';
   }
