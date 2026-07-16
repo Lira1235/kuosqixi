@@ -129,14 +129,15 @@ img {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
-/* 【修正處 1】優化過渡圖七 CSS 初始設定： */
-/* 提高選擇器權重並確實隱藏。使用 pointer-events: none 避免干擾，並確保 display 與 opacity 狀態同步 */
+/* 【核心修正 1】優化過渡圖七 CSS 初始設定： */
+/* 拋棄容易造成閃動的 display: none，改為初始就在物理位置上被 translate3d 推出視窗外（120vh）並維持 opacity: 0。 */
+/* 這樣當滾動觸發時，它是平滑、自然地由下往上滑入，絕不會在頂端閃現。 */
 .step-sticky-frame .step-item.step-7-container {
   z-index: 9;
   align-items: flex-start;
   opacity: 0;
-  display: none; /* 初始完全隱藏，不參與載入時的渲染 */
-  transform: translate3d(0, 100vh, 0);
+  display: flex; /* 保持 flex 佈局，避免 display 切換造成的渲染抖動 */
+  transform: translate3d(0, 120vh, 0); /* 初始推到視窗最下方外 */
   pointer-events: none;
   will-change: transform, opacity;
 }
@@ -309,23 +310,24 @@ function updateScrollEffects() {
       img4.style.transform = `translate3d(0, ${img4Y}px, 0)`;
     }
     // -------------------------------------------------------
-    // 【修正處 2】嚴格順序：步驟一完全顯現（>0.35）後，過渡圖七才實時滑入
+    // 【核心修正 2】無縫過渡物理運算：
+    // 在 progress < 0.35 時，徹底限制過渡圖七的物理位置在最下方（120vh）且 opacity 為 0。
+    // 當 progress 進入 >= 0.35 時，將其物理滑動位置和透明度緊密與 progress 連動，
+    // 從視窗最下方 (window.innerHeight) 平滑推動並淡入至畫面頂端偏下的物理位置 (window.innerHeight * 0.10)。
     // -------------------------------------------------------
     if (progress >= 0.35) {
-      if (img7) img7.style.display = 'flex';
       const img7Opacity = getInterpolatedValue(progress, 0.35, 0.45, 0, 1);
-      // 從螢幕正下方 100vh 實時上移，停在 10vh
+      // 從螢幕底部（window.innerHeight）起算，實時流暢地上滑到 10vh
       const img7Y = getInterpolatedValue(progress, 0.35, 0.50, window.innerHeight, window.innerHeight * 0.10);
       if (img7) {
         img7.style.opacity = img7Opacity;
         img7.style.transform = `translate3d(0, ${img7Y}px, 0)`;
       }
     } else {
-      // 在進度小於 0.35 時，徹底隱藏並還原樣式，避免提早洩漏或干擾
       if (img7) {
-        img7.style.display = 'none';
         img7.style.opacity = 0;
-        img7.style.transform = `translate3d(0, 100vh, 0)`;
+        // 在步驟一尚未滾動完畢前，將其強制錨定在視窗最下方，防止在畫面上方有任何閃現
+        img7.style.transform = `translate3d(0, ${window.innerHeight}px, 0)`;
       }
     }
     // 步驟一同步上移 10vh
