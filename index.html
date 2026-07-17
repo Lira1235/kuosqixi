@@ -157,9 +157,9 @@ img {
   align-items: flex-start;
   transform: translate3d(0, -40px, 0);
 }
-/* 步驟三的 21 特別設定：改為從左方偏 30px 出發，以便向右滑入 */
+/* 步驟三的 21 特別設定：從更左方（-60px）出發，騰出更大幅度的向右橫移動作 */
 .step3-images-group .step-21 {
-  transform: translate3d(-30px, 0, 0);
+  transform: translate3d(-60px, 0, 0);
 }
 .img-wrapper { width: 100%; }
 </style>
@@ -442,10 +442,10 @@ function updateScrollEffects() {
     const img19Y = getInterpolatedValue(progress, 0.78, 0.84, -20, 0);
     if (img19) { img19.style.opacity = img19Opacity; img19.style.transform = `translate3d(0, ${img19Y}px, 0)`; }
 
-    // ───【核心修正點：21 改為向右小幅橫移】───
-    // (8) 工作區域 21 - 左往右橫移滑入（X軸從 -30px 回歸 0）
-    const img21Opacity = getInterpolatedValue(progress, 0.82, 0.88, 0, 1);
-    const img21X = getInterpolatedValue(progress, 0.82, 0.88, -30, 0);
+    // ───【核心修正點：21 極速閃現 + 向右橫移效果】───
+    // (8) 工作區域 21 - 進度區間縮窄為 0.82 ~ 0.83 (極速顯現)，位移幅度增加（-60px -> 0）
+    const img21Opacity = getInterpolatedValue(progress, 0.82, 0.83, 0, 1);
+    const img21X = getInterpolatedValue(progress, 0.82, 0.83, -60, 0);
     if (img21) { 
       img21.style.opacity = img21Opacity; 
       img21.style.transform = `translate3d(${img21X}px, 0, 0)`; 
