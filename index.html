@@ -157,9 +157,9 @@ img {
   align-items: flex-start;
   transform: translate3d(0, -40px, 0);
 }
-/* 以第一版為基準（Y軸偏 -20px，X軸偏 -30px） */
+/* ───【核心修正點：初始位置維持原位 X:0, Y:0】─── */
 .step3-images-group .step-21 {
-  transform: translate3d(-30px, -20px, 0);
+  transform: translate3d(0, 0, 0);
 }
 .img-wrapper { width: 100%; }
 </style>
@@ -404,22 +404,22 @@ function updateScrollEffects() {
     // -------------------------------------------------------
     // 5. 步驟三圖片依序漸顯疊加 (progress: 0.62 ~ 0.88)
     // -------------------------------------------------------
-    // (1) 工作區域 17 (基準點: 0.62)
+    // (1) 工作區域 17
     const img17Opacity = getInterpolatedValue(progress, 0.62, 0.67, 0, 1);
     const img17Y = getInterpolatedValue(progress, 0.62, 0.67, -40, 0);
     if (img17) { img17.style.opacity = img17Opacity; img17.style.transform = `translate3d(0, ${img17Y}px, 0)`; }
 
-    // (2) 工作區域 18 (進度 +0.01 = 0.63)
+    // (2) 工作區域 18
     const img18Opacity = getInterpolatedValue(progress, 0.63, 0.68, 0, 1);
     const img18Y = getInterpolatedValue(progress, 0.63, 0.68, -40, 0);
     if (img18) { img18.style.opacity = img18Opacity; img18.style.transform = `translate3d(0, ${img18Y}px, 0)`; }
 
-    // (3) 工作區域 15 (進度 +0.01 = 0.64)
+    // (3) 工作區域 15
     const img15Opacity = getInterpolatedValue(progress, 0.64, 0.69, 0, 1);
     const img15Y = getInterpolatedValue(progress, 0.64, 0.69, -40, 0);
     if (img15) { img15.style.opacity = img15Opacity; img15.style.transform = `translate3d(0, ${img15Y}px, 0)`; }
 
-    // (4) 工作區域 20 (進度 +0.01 = 0.65)
+    // (4) 工作區域 20
     const img20Opacity = getInterpolatedValue(progress, 0.65, 0.70, 0, 1);
     const img20Y = getInterpolatedValue(progress, 0.65, 0.70, -40, 0);
     if (img20) { img20.style.opacity = img20Opacity; img20.style.transform = `translate3d(0, ${img20Y}px, 0)`; }
@@ -439,14 +439,13 @@ function updateScrollEffects() {
     const img19Y = getInterpolatedValue(progress, 0.78, 0.84, -20, 0);
     if (img19) { img19.style.opacity = img19Opacity; img19.style.transform = `translate3d(0, ${img19Y}px, 0)`; }
 
-    // ───【核心修正點：顯現區間拓寬至 0.82 ~ 0.84（體感為原本的兩倍 0.1 秒）】───
-    // (8) 工作區域 21 - 左上往右下平滑滑入
+    // ───【核心修正點：高度維持 0，橫移幅度縮小為更細緻的 10px】───
+    // (8) 工作區域 21 - 從 0 移動到 10px
     const img21Opacity = getInterpolatedValue(progress, 0.82, 0.84, 0, 1);
-    const img21X = getInterpolatedValue(progress, 0.82, 0.84, -30, 0);
-    const img21Y = getInterpolatedValue(progress, 0.82, 0.84, -20, 0);
+    const img21X = getInterpolatedValue(progress, 0.82, 0.84, 0, 10);
     if (img21) { 
       img21.style.opacity = img21Opacity; 
-      img21.style.transform = `translate3d(${img21X}px, ${img21Y}px, 0)`; 
+      img21.style.transform = `translate3d(${img21X}px, 0, 0)`; 
     }
 
     stickyFrame.style.transform = 'translate3d(0, 0, 0)';
