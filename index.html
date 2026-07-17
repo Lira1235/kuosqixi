@@ -157,6 +157,10 @@ img {
   align-items: flex-start;
   transform: translate3d(0, -40px, 0);
 }
+/* 步驟三的 21 特別設定：改為從左方偏 30px 出發，以便向右滑入 */
+.step3-images-group .step-21 {
+  transform: translate3d(-30px, 0, 0);
+}
 .img-wrapper { width: 100%; }
 </style>
 </head>
@@ -225,8 +229,7 @@ img {
       </div>
 
       <!-- 3. 步驟三 圖片群組 (200vh ~ 300vh) -->
-      <!-- ───【核心修正點：圖層前後重排】─── -->
-      <!-- 調整後的 Z-index 順序（前至後）：21 (28) > 22 (27) > 19 (26) > 17 (25) > 18 (24) > 15 (23) > 20 (22) > 16 (21) -->
+      <!-- Z-index 順序（前至後）：21 (28) > 22 (27) > 19 (26) > 17 (25) > 18 (24) > 15 (23) > 20 (22) > 16 (21) -->
       <div class="step-images-group step3-images-group">
         <div class="step-item step-21" style="z-index: 28;">
           <div class="img-wrapper"><img src="工作區域 21.png" decoding="async"></div>
@@ -403,48 +406,50 @@ function updateScrollEffects() {
 
     // -------------------------------------------------------
     // 5. 步驟三圖片依序漸顯疊加 (progress: 0.62 ~ 0.88)
-    // ───【核心修正點：出現順序重排】───
-    // 新順序：17 -> 18 -> 15 -> 20 -> 22 -> 16 -> 19 -> 21
     // -------------------------------------------------------
-    // (1) 工作區域 17 (基準點: 0.62)
+    // (1) 工作區域 17 (基準點: 0.62) - 上往下滑入
     const img17Opacity = getInterpolatedValue(progress, 0.62, 0.67, 0, 1);
     const img17Y = getInterpolatedValue(progress, 0.62, 0.67, -40, 0);
     if (img17) { img17.style.opacity = img17Opacity; img17.style.transform = `translate3d(0, ${img17Y}px, 0)`; }
 
-    // (2) 工作區域 18 (進度 +0.01 = 0.63)
+    // (2) 工作區域 18 (進度 +0.01 = 0.63) - 上往下滑入
     const img18Opacity = getInterpolatedValue(progress, 0.63, 0.68, 0, 1);
     const img18Y = getInterpolatedValue(progress, 0.63, 0.68, -40, 0);
     if (img18) { img18.style.opacity = img18Opacity; img18.style.transform = `translate3d(0, ${img18Y}px, 0)`; }
 
-    // (3) 工作區域 15 (進度 +0.01 = 0.64)
+    // (3) 工作區域 15 (進度 +0.01 = 0.64) - 上往下滑入
     const img15Opacity = getInterpolatedValue(progress, 0.64, 0.69, 0, 1);
     const img15Y = getInterpolatedValue(progress, 0.64, 0.69, -40, 0);
     if (img15) { img15.style.opacity = img15Opacity; img15.style.transform = `translate3d(0, ${img15Y}px, 0)`; }
 
-    // (4) 工作區域 20 (進度 +0.01 = 0.65)
+    // (4) 工作區域 20 (進度 +0.01 = 0.65) - 上往下滑入
     const img20Opacity = getInterpolatedValue(progress, 0.65, 0.70, 0, 1);
     const img20Y = getInterpolatedValue(progress, 0.65, 0.70, -40, 0);
     if (img20) { img20.style.opacity = img20Opacity; img20.style.transform = `translate3d(0, ${img20Y}px, 0)`; }
 
-    // (5) 工作區域 22 (原為第六，現調整為第五：接在 20 之後)
+    // (5) 工作區域 22 - 上往下滑入
     const img22Opacity = getInterpolatedValue(progress, 0.69, 0.75, 0, 1);
     const img22Y = getInterpolatedValue(progress, 0.69, 0.75, -40, 0);
     if (img22) { img22.style.opacity = img22Opacity; img22.style.transform = `translate3d(0, ${img22Y}px, 0)`; }
 
-    // (6) 工作區域 16 (原為第五，現調整為第六：接在 22 之後)
+    // (6) 工作區域 16 - 上往下滑入
     const img16Opacity = getInterpolatedValue(progress, 0.73, 0.79, 0, 1);
     const img16Y = getInterpolatedValue(progress, 0.73, 0.79, -40, 0);
     if (img16) { img16.style.opacity = img16Opacity; img16.style.transform = `translate3d(0, ${img16Y}px, 0)`; }
 
-    // (7) 工作區域 19 (維持原位)
+    // (7) 工作區域 19 - 上往下滑入
     const img19Opacity = getInterpolatedValue(progress, 0.78, 0.84, 0, 1);
     const img19Y = getInterpolatedValue(progress, 0.78, 0.84, -20, 0);
     if (img19) { img19.style.opacity = img19Opacity; img19.style.transform = `translate3d(0, ${img19Y}px, 0)`; }
 
-    // (8) 工作區域 21 (維持原位)
+    // ───【核心修正點：21 改為向右小幅橫移】───
+    // (8) 工作區域 21 - 左往右橫移滑入（X軸從 -30px 回歸 0）
     const img21Opacity = getInterpolatedValue(progress, 0.82, 0.88, 0, 1);
-    const img21Y = getInterpolatedValue(progress, 0.82, 0.88, -20, 0);
-    if (img21) { img21.style.opacity = img21Opacity; img21.style.transform = `translate3d(0, ${img21Y}px, 0)`; }
+    const img21X = getInterpolatedValue(progress, 0.82, 0.88, -30, 0);
+    if (img21) { 
+      img21.style.opacity = img21Opacity; 
+      img21.style.transform = `translate3d(${img21X}px, 0, 0)`; 
+    }
 
     stickyFrame.style.transform = 'translate3d(0, 0, 0)';
   }
